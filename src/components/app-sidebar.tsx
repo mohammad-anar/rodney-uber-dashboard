@@ -1,6 +1,14 @@
 "use client";
 
-import { IconDashboard } from "@tabler/icons-react";
+import {
+  IconBell,
+  IconBox,
+  IconDashboard,
+  IconHelp,
+  IconSettings,
+  IconUser,
+  IconVideo,
+} from "@tabler/icons-react";
 import * as React from "react";
 
 import logo from "@/assets/logo.png";
@@ -21,6 +29,36 @@ const data = {
       name: "Dashboard",
       url: "/",
       icon: IconDashboard,
+    },
+    {
+      name: "User Management",
+      url: "/user",
+      icon: IconUser,
+    },
+    {
+      name: "Video Tracking",
+      url: "/video",
+      icon: IconVideo,
+    },
+    {
+      name: "Promo Code",
+      url: "/promo-code",
+      icon: IconBox,
+    },
+    {
+      name: "Support Request",
+      url: "/support",
+      icon: IconHelp,
+    },
+    {
+      name: "Settings",
+      url: "/settings",
+      icon: IconSettings,
+    },
+    {
+      name: "Notifications",
+      url: "/notification",
+      icon: IconBell,
     },
   ],
 };
