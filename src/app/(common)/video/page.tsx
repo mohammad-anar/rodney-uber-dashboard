@@ -1,6 +1,6 @@
 import { MyPagination } from "@/components/shared/MyPagination";
 import { VideoLogsTable } from "@/components/tables/VideoLogsTable";
-import { VideoSection } from "./videoSection";
+import { VideoSection } from "../../../components/video/videoSection";
 
 const VideoPage = () => {
   return (
