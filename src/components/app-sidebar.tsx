@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/sidebar";
 import Image from "next/image";
 import Link from "next/link";
+import { PlayIcon } from "lucide-react";
 
 const data = {
   documents: [
@@ -38,7 +39,7 @@ const data = {
     {
       name: "Video Tracking",
       url: "/video",
-      icon: IconVideo,
+      icon: PlayIcon,
     },
     {
       name: "Promo Code",

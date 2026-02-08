@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { type Icon } from "@tabler/icons-react";
@@ -7,11 +8,10 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  useSidebar,
 } from "@/components/ui/sidebar";
+import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { cn } from "@/lib/utils";
 
 export function NavDocuments({
   items,
@@ -19,7 +19,7 @@ export function NavDocuments({
   items: {
     name: string;
     url: string;
-    icon: Icon;
+    icon: Icon | any;
   }[];
 }) {
   // const { isMobile } = useSidebar();
