@@ -1,4 +1,5 @@
 import { AnalyticsChart1 } from "@/components/charts/AreaChart";
+import Charts from "@/components/charts/Charts";
 import { SectionCards } from "@/components/section-cards";
 
 const page = () => {
@@ -10,7 +11,7 @@ const page = () => {
             <SectionCards />
           </div>
           <div className="p-5">
-            <AnalyticsChart1 />
+            <Charts />
           </div>
         </div>
       </div>
