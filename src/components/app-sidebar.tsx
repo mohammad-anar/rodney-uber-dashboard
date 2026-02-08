@@ -70,7 +70,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarMenu>
           <SidebarMenuItem>
             {/* <SidebarMenuButton asChild className=" flex items-center border"> */}
-            <div className="flex items-center justify-center px-8 pb-2">
+            <div className="flex items-center max-w-48 w-full mx-auto justify-center px-8 pb-2">
               <Link
                 href="/"
                 className="block w-full duration-300  overflow-hidden"
@@ -78,9 +78,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 <Image
                   src={logo}
                   className="w-full h-full"
-                  width={300}
-                  height={300}
-                  alt="Zero Proof Driving"
+                  width={200}
+                  height={200}
+                  alt="Zero Proof Driving logo"
                 />
               </Link>
             </div>
