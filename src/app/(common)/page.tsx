@@ -30,7 +30,7 @@ const page = () => {
                     </p>
                   </div>
                 </div>
-                <button className="mt-6 bg-yellow-500 hover:bg-yellow-600 text-white font-medium py-2 px-4 rounded transition-colors">
+                <button className="mt-6 bg-primary hover:bg-yellow-600 text-white font-medium py-2 px-4 rounded transition-colors">
                   Manage Users
                 </button>
               </div>
@@ -50,7 +50,7 @@ const page = () => {
                     </p>
                   </div>
                 </div>
-                <button className="mt-6 border-2 border-yellow-500 text-yellow-500 hover:bg-yellow-50 font-medium py-2 px-4 rounded transition-colors">
+                <button className="mt-6 border-2 border-primary text-primary hover:bg-yellow-50 font-medium py-2 px-4 rounded transition-colors">
                   View Reports
                 </button>
               </div>

@@ -73,7 +73,7 @@ export function MyPagination({
               onClick={() => onPageChange(page as number)}
               className={
                 page === currentPage
-                  ? "bg-gray-900 text-white hover:bg-gray-800"
+                  ? "bg-primary text-white hover:bg-gray-800"
                   : "text-gray-700 border-gray-300 hover:bg-gray-50"
               }
             >

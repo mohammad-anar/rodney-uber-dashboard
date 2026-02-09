@@ -71,7 +71,7 @@ export function VideoSection() {
               <p className="text-muted-foreground">{videoData.description}</p>
               <Button
                 onClick={() => setIsEditing(true)}
-                className="mt-3 sm:mt-8 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
+                className="mt-3 sm:mt-8 px-4 py-2 !bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
               >
                 Edit Video
               </Button>

@@ -51,7 +51,7 @@ export function PromoCard({
           Promo Code
         </p>
         <div className="flex items-center justify-between">
-          <span className="font-mono text-2xl font-bold text-amber-400">
+          <span className="font-mono text-2xl font-bold text-primary">
             {promoCode}
           </span>
           <Button

@@ -9,7 +9,7 @@ const SwitchWithState = ({ isActive }: { isActive: boolean }) => {
         checked={isOn}
         onClick={() => setIsOn(!isOn)}
         className={`${
-          isOn ? "!bg-yellow-500" : "bg-gray-200"
+          isOn ? "!bg-primary" : "bg-gray-200"
         } relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 cursor-pointer`}
         id="airplane-mode"
       />

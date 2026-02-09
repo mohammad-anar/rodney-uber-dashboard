@@ -43,7 +43,7 @@ const notifications: Notification[] = [
       'Only 15 promo codes remaining in the "SAFE2024" pool. Consider adding more codes.',
     timestamp: "1 hour ago",
     icon: <AlertTriangle className="w-6 h-6 text-white" />,
-    iconBg: "bg-amber-400",
+    iconBg: "bg-primary",
     unread: true,
   },
   {
@@ -93,7 +93,7 @@ export default function NotificationPage() {
           </div>
           <Button
             variant="outline"
-            className=" border-amber-400 text-amber-600 hover:bg-amber-50 bg-transparent"
+            className=" border-primary text-primary hover:bg-primary/50 bg-transparent"
           >
             Mark All as Read
           </Button>
@@ -122,7 +122,7 @@ export default function NotificationPage() {
                     {notification.title}
                   </h3>
                   {notification.unread && (
-                    <span className="w-2 h-2 rounded-full bg-amber-400 flex-shrink-0 mt-1.5"></span>
+                    <span className="w-2 h-2 rounded-full bg-primary flex-shrink-0 mt-1.5"></span>
                   )}
                 </div>
                 <p className="text-sm text-gray-600 mt-1 leading-relaxed">

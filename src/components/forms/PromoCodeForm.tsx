@@ -248,7 +248,7 @@ export default function PromoCodeForm() {
         <div className="flex gap-3 pt-4">
           <Button
             type="submit"
-            className="bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg"
+            className="bg-primary hover:bg-yellow-600 text-white rounded-lg"
           >
             <span className="mr-2">+</span>
             Create Promo Code
@@ -257,7 +257,7 @@ export default function PromoCodeForm() {
             type="button"
             onClick={onReset}
             variant="outline"
-            className="border-yellow-500 text-yellow-600 hover:bg-yellow-50 rounded-lg bg-transparent"
+            className="border-primary text-yellow-600 hover:bg-yellow-50 rounded-lg bg-transparent"
           >
             <span className="mr-2">↻</span>
             Reset

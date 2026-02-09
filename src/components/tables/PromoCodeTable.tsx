@@ -72,19 +72,48 @@ export function PromoCodeTable({ promos = defaultPromos }: PromoTableProps) {
   const handleDelete = (id: string) => {
     console.log({ id });
   };
-  const handleSuspend = (id: string) => {
-    console.log({ id });
-  };
+
   return (
     <div className="space-y-6 rounded-xl">
-      <div className="flex items-center gap-3 w-full">
-        <div className="flex-1 flex max-w-xl items-center gap-3 px-4 py-2 rounded-lg border border-gray-200 bg-white">
-          <Search className="w-5 h-5 text-gray-400" />
-          <input
-            type="text"
-            placeholder="Search by name or email..."
-            className="flex-1 bg-transparent text-sm outline-none text-gray-700 placeholder:text-gray-400"
-          />
+      <div className="flex items-center justify-between gap-3 w-full">
+        <h3 className="text-xl font-bold">Promo codes</h3>
+
+        <div className="flex items-center gap-5">
+          <Select
+            defaultValue={"All Status"}
+            onValueChange={(value) => {
+              // handle status change here
+              console.log("New status:", value);
+            }}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Status" />
+            </SelectTrigger>
+
+            <SelectContent>
+              <SelectItem value={"All Status"}>All Status</SelectItem>
+              <SelectItem value="Active">Active</SelectItem>
+              <SelectItem value="Expired">Expired</SelectItem>
+              <SelectItem value="Inactive">Inactive</SelectItem>
+            </SelectContent>
+          </Select>
+          <Select
+            defaultValue={"All Source"}
+            onValueChange={(value) => {
+              // handle status change here
+              console.log("New status:", value);
+            }}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Source" />
+            </SelectTrigger>
+
+            <SelectContent>
+              <SelectItem value={"All Source"}>All Status</SelectItem>
+              <SelectItem value="Uber">Active</SelectItem>
+              <SelectItem value="Lyft">Expired</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
       </div>
 

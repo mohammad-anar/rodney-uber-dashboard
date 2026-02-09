@@ -6,18 +6,18 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
 } from "@/components/ui/dialog";
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 import Papa from "papaparse";
 import { useRef, useState } from "react";
@@ -58,7 +58,7 @@ export default function BulkUpload() {
     Papa.parse(file, {
       header: true,
       skipEmptyLines: true,
-      complete: (results:any) => {
+      complete: (results: any) => {
         const headers = results.meta.fields || [];
         const data = results.data as CSVRecord[];
 
@@ -69,7 +69,7 @@ export default function BulkUpload() {
         const autoMapping: FieldMapping = REQUIRED_FIELDS.reduce(
           (acc, field) => {
             const matchedHeader = headers.find(
-              (h:any) => h.toLowerCase() === field.toLowerCase(),
+              (h: any) => h.toLowerCase() === field.toLowerCase(),
             );
             return { ...acc, [field]: matchedHeader || null };
           },
@@ -78,7 +78,7 @@ export default function BulkUpload() {
         setFieldMapping(autoMapping);
         setShowMappingDialog(true);
       },
-      error: (error:any) => {
+      error: (error: any) => {
         console.error("CSV parsing error:", error);
         alert("Error parsing CSV file");
       },
@@ -206,7 +206,7 @@ export default function BulkUpload() {
         <div className="mt-6 flex justify-center">
           <Button
             onClick={() => fileInputRef.current?.click()}
-            className="bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg"
+            className="bg-primary hover:bg-yellow-600 text-white rounded-lg"
           >
             Choose File
           </Button>
@@ -283,7 +283,7 @@ export default function BulkUpload() {
             </Button>
             <Button
               onClick={handleUpload}
-              className="flex-1 bg-yellow-500 hover:bg-yellow-600 text-white"
+              className="flex-1 bg-primary hover:bg-yellow-600 text-white"
             >
               Upload
             </Button>

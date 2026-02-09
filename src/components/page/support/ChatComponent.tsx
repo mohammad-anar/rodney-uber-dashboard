@@ -95,7 +95,7 @@ export default function ChatComponent() {
               className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${
                 message.sender === "user"
                   ? "bg-red-500 text-white"
-                  : "bg-yellow-500 text-white"
+                  : "bg-primary text-white"
               }`}
             >
               {message.sender === "user" ? "🔴" : "😊"}
@@ -132,7 +132,7 @@ export default function ChatComponent() {
 
         {isLoading && (
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-yellow-500 flex items-center justify-center text-white flex-shrink-0">
+            <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white flex-shrink-0">
               😊
             </div>
             <div className="flex gap-1">
