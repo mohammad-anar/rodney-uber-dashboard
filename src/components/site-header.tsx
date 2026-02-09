@@ -9,6 +9,7 @@ import {
 import { IconBell } from "@tabler/icons-react";
 import { User } from "lucide-react";
 import Link from "next/link";
+import { Button } from "./ui/button";
 
 export function SiteHeader() {
   const data = {
@@ -45,48 +46,26 @@ export function SiteHeader() {
               </div>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-[300px]">
-              <div className="px-2">
+              <div className="px-2 flex items-center justify-between">
                 <h4 className="font-bold text-lg">Notification</h4>
+                <Button variant="link" className="">
+                  Mark all read
+                </Button>
               </div>
               <DropdownMenuSeparator />
               <div className="px-2 max-h-[200px] overflow-y-auto">
                 <div className="flex items-center  gap-3 bg-my-primary/10 hover:bg-gray-100 duration-300 rounded-md px-3 p-2 cursor-pointer">
                   <User />
                   <div>
-                    <h4 className="text-sm  font-bold">New order</h4>
+                    <h4 className="text-sm  font-bold">New Video completed</h4>
                     <p className="text-sm">2 min ago</p>
                   </div>
                 </div>
-                {/*  */}
-                <div className="flex items-center  gap-3 hover:bg-gray-100 duration-300 rounded-md px-3 p-2 cursor-pointer">
+                <div className="flex items-center  gap-3 bg-my-primary/10 hover:bg-gray-100 duration-300 rounded-md px-3 p-2 cursor-pointer">
                   <User />
                   <div>
-                    <h4 className="text-sm  font-bold">New order</h4>
-                    <p className="text-sm">2 min ago</p>
-                  </div>
-                </div>
-                {/*  */}
-                <div className="flex items-center  gap-3 hover:bg-gray-100 duration-300 rounded-md px-3 p-2 cursor-pointer">
-                  <User />
-                  <div>
-                    <h4 className="text-sm  font-bold">New order</h4>
-                    <p className="text-sm">2 min ago</p>
-                  </div>
-                </div>
-                {/*  */}
-                <div className="flex items-center  gap-3 hover:bg-gray-100 duration-300 rounded-md px-3 p-2 cursor-pointer">
-                  <User />
-                  <div>
-                    <h4 className="text-sm  font-bold">New order</h4>
-                    <p className="text-sm">2 min ago</p>
-                  </div>
-                </div>
-                {/*  */}
-                <div className="flex items-center  gap-3 hover:bg-gray-100 duration-300 rounded-md px-3 p-2 cursor-pointer">
-                  <User />
-                  <div>
-                    <h4 className="text-sm  font-bold">New order</h4>
-                    <p className="text-sm">2 min ago</p>
+                    <h4 className="text-sm  font-bold">New support request</h4>
+                    <p className="text-sm">1 hours ago </p>
                   </div>
                 </div>
               </div>
