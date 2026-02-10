@@ -60,7 +60,7 @@ export function SectionCards() {
       amount: 15,
       icon: ArrowDownWideNarrow,
       percentage: "expired",
-      description: "Active promo code",
+      description: "Expired promo code",
       bgColor: "orange-100",
       iconColor: "orange",
     },
