@@ -28,37 +28,37 @@ const data = {
   documents: [
     {
       name: "Dashboard",
-      url: "/",
+      url: "/dashboard/",
       icon: IconDashboard,
     },
     {
       name: "User Management",
-      url: "/user",
+      url: "/dashboard/user",
       icon: IconUser,
     },
     {
       name: "Video Tracking",
-      url: "/video",
+      url: "/dashboard/video",
       icon: PlayIcon,
     },
     {
       name: "Promo Code",
-      url: "/promo-code",
+      url: "/dashboard/promo-code",
       icon: IconBox,
     },
     {
       name: "Support Request",
-      url: "/support",
+      url: "/dashboard/support",
       icon: IconHelp,
     },
     {
       name: "Settings",
-      url: "/settings",
+      url: "/dashboard/settings",
       icon: IconSettings,
     },
     {
       name: "Notifications",
-      url: "/notification",
+      url: "/dashboard/notification",
       icon: IconBell,
     },
   ],

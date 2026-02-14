@@ -28,10 +28,17 @@ export default function LoginPage() {
     },
   });
 
-  const onSubmit = (data: LoginForm) => {
-    console.log("Form submitted:", data);
-    localStorage.setItem("isLoggedIn", "true");
-    router.push("/");
+  const onSubmit = async (data: LoginForm) => {
+    const res = await fetch("/api/login", {
+      method: "POST",
+      body: JSON.stringify({ email: data.email, password: data.password }),
+    });
+
+    if (res.ok) {
+      router.push("/");
+    } else {
+      alert("Invalid credentials");
+    }
   };
 
   return (
