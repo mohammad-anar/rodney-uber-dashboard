@@ -22,6 +22,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { SupportDetails } from "@/app/dashboard/support/SupportDetails";
 
 /* ================= TYPES ================= */
 
@@ -172,7 +173,7 @@ export function SupportRequestTable({
 
       {/* Modal */}
       <MyModal open={open} onOpenChange={setOpen}>
-        <h2 className="text-lg font-semibold">Support Request Details</h2>
+        <SupportDetails />
       </MyModal>
     </div>
   );
