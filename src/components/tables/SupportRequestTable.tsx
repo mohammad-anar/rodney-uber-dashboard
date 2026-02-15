@@ -159,7 +159,7 @@ export function SupportRequestTable({
                 <TableCell className="text-center">
                   <Button
                     variant="link"
-                    className="text-yellow-600"
+                    className="text-primary cursor-pointer"
                     onClick={() => setOpen(true)}
                   >
                     View Details
