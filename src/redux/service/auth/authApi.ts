@@ -8,28 +8,28 @@ interface LoginRequest {
 
 const authApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    registerUser: builder.mutation({
+    register: builder.mutation({
       query: (user) => ({
         url: "/auth/register",
         method: "POST",
         body: user,
       }),
-      invalidatesTags: ["auth"],
+      invalidatesTags: ["Auth"],
     }),
-    loginUser: builder.mutation<any, LoginRequest>({
+    login: builder.mutation<any, LoginRequest>({
       query: (user) => ({
         url: "/auth/login",
         method: "POST",
         body: user,
       }),
-      invalidatesTags: ["auth"],
+      invalidatesTags: ["Auth"],
     }),
     logout: builder.mutation({
       query: () => ({
         url: "/auth/logout",
         method: "POST",
       }),
-      invalidatesTags: ["auth"],
+      invalidatesTags: ["Auth"],
     }),
     forgatPassword: builder.mutation<any, { email: string }>({
       query: (user) => ({
@@ -37,7 +37,7 @@ const authApi = baseApi.injectEndpoints({
         method: "POST",
         body: user,
       }),
-      invalidatesTags: ["auth"],
+      invalidatesTags: ["Auth"],
     }),
     resetPassword: builder.mutation({
       query: ({ token, user }) => ({
@@ -48,7 +48,7 @@ const authApi = baseApi.injectEndpoints({
           Authorization: `${token}`,
         },
       }),
-      invalidatesTags: ["auth"],
+      invalidatesTags: ["Auth"],
     }),
     changePassword: builder.mutation({
       query: (user) => ({
@@ -56,14 +56,14 @@ const authApi = baseApi.injectEndpoints({
         method: "PATCH",
         body: user,
       }),
-      invalidatesTags: ["auth"],
+      invalidatesTags: ["Auth"],
     }),
   }),
 });
 
 export const {
-  useRegisterUserMutation,
-  useLoginUserMutation,
+  useRegisterMutation,
+  useLoginMutation,
   useLogoutMutation,
   useChangePasswordMutation,
   useForgatPasswordMutation,

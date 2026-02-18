@@ -18,6 +18,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { useRouter } from "next/navigation";
+import Cookies from "js-cookie";
 
 export function NavUser({
   user,
@@ -33,9 +34,7 @@ export function NavUser({
 
   const handleLogout = async () => {
     try {
-      await fetch("/api/logout", {
-        method: "POST",
-      });
+      Cookies.remove("accessToken");
 
       router.push("/auth/login");
     } catch (error) {

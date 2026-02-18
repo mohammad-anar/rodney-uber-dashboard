@@ -2,12 +2,15 @@
 
 import image1 from "@/assets/loginPageImage.png";
 import { Button } from "@/components/ui/button";
-import { Eye, EyeOff, Lock, Mail } from "lucide-react";
+import { useLoginMutation } from "@/redux/service/auth/authApi";
+import { Eye, EyeOff, Loader2, Lock, Mail } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import Cookies from "js-cookie";
 
 interface LoginForm {
   email: string;
@@ -17,6 +20,11 @@ interface LoginForm {
 export default function LoginPage() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
+
+  // api
+  const [login, { isLoading }] = useLoginMutation();
+
+  // form
   const {
     register,
     handleSubmit,
@@ -29,15 +37,20 @@ export default function LoginPage() {
   });
 
   const onSubmit = async (data: LoginForm) => {
-    const res = await fetch("/api/login", {
-      method: "POST",
-      body: JSON.stringify({ email: data.email, password: data.password }),
-    });
-
-    if (res.ok) {
-      router.push("/");
-    } else {
-      alert("Invalid credentials");
+    try {
+      toast.promise(login(data).unwrap(), {
+        loading: "Logging in...",
+        success: (data) => {
+          console.log(data);
+          Cookies.set("accessToken", data?.data?.accessToken);
+          Cookies.set("refreshToken", data?.data?.refreshToken);
+          router.push("/dashboard");
+          return "Login successful!";
+        },
+        error: (err) => err?.data?.message || "Login failed",
+      });
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -138,7 +151,8 @@ export default function LoginPage() {
             type="submit"
             className="w-full py-6 uppercase rounded-lg bg-primary font-semibold  text-white text-lg cursor-pointer transition-colors"
           >
-            Log in
+            {isLoading && <Loader2 className="spin-in" />}
+            {isLoading ? "Please wait..." : "Login"}
           </Button>
         </form>
       </div>

@@ -1,49 +1,33 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import type {
-  BaseQueryFn,
-  FetchArgs,
-  FetchBaseQueryError,
-} from "@reduxjs/toolkit/query";
-import { RootState } from "../store";
 import { logout, setAccessToken } from "../features/auth";
+import type { RootState } from "../store";
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: "http://localhost:5000/api/v1",
+  baseUrl: process.env.NEXT_PUBLIC_API_BASE || "http://localhost:5000/api/v1",
   prepareHeaders: (headers, { getState }) => {
-    const token = (getState() as RootState).auth?.accessToken;
-    if (token) {
-      headers.set("Authorization", `${token}`);
-    }
+    const token = (getState() as RootState).auth.accessToken;
+    if (token) headers.set("Authorization", `Bearer ${token}`);
     return headers;
   },
-  credentials: "include",
+  credentials: "include", // must include cookies
 });
 
-const baseQueryWithReauth: BaseQueryFn<
-  string | FetchArgs,
-  unknown,
-  FetchBaseQueryError
-> = async (args, api, extraOptions) => {
+const baseQueryWithReauth = async (args: any, api: any, extraOptions: any) => {
   let result = await baseQuery(args, api, extraOptions);
 
   if (result.error && result.error.status === 401) {
-    // Refresh access token
     const refreshResult = await baseQuery(
-      {
-        url: "/auth/refresh-token",
-        method: "POST",
-      },
+      { url: "/auth/refresh-token", method: "POST" },
       api,
-      extraOptions
+      extraOptions,
     );
 
     if (refreshResult.data) {
       const newAccessToken = (refreshResult.data as any).accessToken;
-
       api.dispatch(setAccessToken(newAccessToken));
 
-      // Retry the original request
+      // Retry original request
       result = await baseQuery(args, api, extraOptions);
     } else {
       api.dispatch(logout());
@@ -56,7 +40,7 @@ const baseQueryWithReauth: BaseQueryFn<
 export const baseApi = createApi({
   reducerPath: "baseApi",
   baseQuery: baseQueryWithReauth,
-  tagTypes: ["auth", "roofing", "window"],
+  tagTypes: ["Auth"],
   endpoints: () => ({}),
 });
 
