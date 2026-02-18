@@ -28,7 +28,7 @@ const data = {
   documents: [
     {
       name: "Dashboard",
-      url: "/dashboard/",
+      url: "/dashboard",
       icon: IconDashboard,
     },
     {
