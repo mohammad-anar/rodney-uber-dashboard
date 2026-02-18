@@ -1,7 +1,8 @@
+"use client";
 import UserStatsCard from "@/components/cards/UserStatsCard";
 import { MyPagination } from "@/components/shared/MyPagination";
 import { UsersTable } from "@/components/tables/UsersTable";
-import { Users, Play, Ticket, Shield } from "lucide-react";
+import { Play, Shield, Ticket, Users } from "lucide-react";
 
 const UserPage = () => {
   const metrics = [

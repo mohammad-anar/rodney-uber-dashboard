@@ -2,15 +2,21 @@
 
 import image1 from "@/assets/loginPageImage.png";
 import { Button } from "@/components/ui/button";
+import {
+  setAccessToken,
+  setRefreshToken,
+  setUser,
+} from "@/redux/features/auth";
 import { useLoginMutation } from "@/redux/service/auth/authApi";
+import Cookies from "js-cookie";
 import { Eye, EyeOff, Loader2, Lock, Mail } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { useDispatch } from "react-redux";
 import { toast } from "sonner";
-import Cookies from "js-cookie";
 
 interface LoginForm {
   email: string;
@@ -20,6 +26,7 @@ interface LoginForm {
 export default function LoginPage() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
+  const dispatch = useDispatch();
 
   // api
   const [login, { isLoading }] = useLoginMutation();
@@ -36,21 +43,40 @@ export default function LoginPage() {
     },
   });
 
-  const onSubmit = async (data: LoginForm) => {
+  const onSubmit = async (formData: LoginForm) => {
     try {
-      toast.promise(login(data).unwrap(), {
-        loading: "Logging in...",
-        success: (data) => {
-          console.log(data);
-          Cookies.set("accessToken", data?.data?.accessToken);
-          Cookies.set("refreshToken", data?.data?.refreshToken);
-          router.push("/dashboard");
-          return "Login successful!";
-        },
-        error: (err) => err?.data?.message || "Login failed",
+      const response = await login(formData).unwrap();
+
+      // ✅ RTK Query unwrap returns the response data directly
+      const { user, accessToken, refreshToken } = response.data;
+
+      // Save tokens in cookies if needed
+      Cookies.set("accessToken", accessToken, {
+        expires: 1,
+        path: "/",
+        sameSite: "lax",
+        secure: false,
       });
+      Cookies.set("refreshToken", refreshToken, {
+        expires: 7,
+        path: "/",
+        sameSite: "lax",
+        secure: false,
+      });
+
+      // Update Redux slice
+      dispatch(
+        setUser({
+          user,
+        }),
+      );
+      dispatch(setAccessToken(accessToken));
+      dispatch(setRefreshToken(refreshToken));
+
+      // Redirect to dashboard
+      router.push("/dashboard");
     } catch (error) {
-      console.error(error);
+      console.error("Login failed:", error);
     }
   };
 

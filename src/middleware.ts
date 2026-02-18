@@ -16,6 +16,9 @@ export function middleware(request: NextRequest) {
   if (pathname === "/") {
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
+  if (pathname === "/login") {
+    return NextResponse.redirect(new URL("/auth/login", request.url));
+  }
 
   // Redirect unauthenticated users
   if (!token && isProtectedRoute) {

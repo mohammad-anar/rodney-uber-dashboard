@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { IconLogout } from "@tabler/icons-react";
@@ -19,6 +20,8 @@ import {
 } from "@/components/ui/sidebar";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
+import { useDispatch } from "react-redux";
+import { setAccessToken, setUser } from "@/redux/features/auth";
 
 export function NavUser({
   user,
@@ -29,14 +32,19 @@ export function NavUser({
     avatar: string;
   };
 }) {
-  const router = useRouter();
   const { isMobile } = useSidebar();
+  const dispatch = useDispatch();
 
   const handleLogout = async () => {
     try {
       Cookies.remove("accessToken");
-
-      router.push("/auth/login");
+      dispatch(setAccessToken(null));
+      dispatch(
+        setUser({
+          user: null,
+        }),
+      );
+      window.location.href = "/auth/login";
     } catch (error) {
       console.log(error);
     }

@@ -13,6 +13,7 @@ import { IconBan, IconEye, IconTrash } from "@tabler/icons-react";
 import { Search } from "lucide-react";
 import { useState } from "react";
 import { MyModal } from "../shared/MyModal";
+import { useGetAllUsersQuery } from "@/redux/service/user/userApi";
 
 interface User {
   id: string;
@@ -132,6 +133,11 @@ const defaultUsers: User[] = [
 
 export function UsersTable({ users = defaultUsers }: UsersTableProps) {
   const [open, setOpen] = useState(false);
+
+  // api
+  const { data, isLoading } = useGetAllUsersQuery({});
+  console.log(isLoading, "users");
+
   const handleDelete = (id: string) => {
     console.log({ id });
   };

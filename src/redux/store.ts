@@ -1,13 +1,13 @@
 import { configureStore } from "@reduxjs/toolkit";
-import storage from "redux-persist/lib/storage"; // Correct import for local storage
-import { persistStore, persistReducer } from "redux-persist"; // Ensure correct import
-import { baseApi } from "./api/baseApi"; // Ensure correct import
+import storage from "redux-persist/lib/storage"; 
+import { persistStore, persistReducer } from "redux-persist"; 
+import { baseApi } from "./api/baseApi";
 import authReducer from "./features/auth";
 
 const persistConfig = {
   key: "auth",
   storage,
-  whitelist: ["user", "accessToken", "refreshToken", "isLoading"], // Ensure these are included
+  whitelist: ["user", "accessToken", "refreshToken"],
 };
 
 const persistedReducer = persistReducer(persistConfig, authReducer);
