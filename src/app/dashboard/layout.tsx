@@ -1,6 +1,8 @@
+
 import { AppSidebar } from "@/components/app-sidebar";
 import { SiteHeader } from "@/components/site-header";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { ReactNode } from "react";
 const CommonLayout = ({ children }: { children: ReactNode }) => {
   return (
@@ -17,7 +19,7 @@ const CommonLayout = ({ children }: { children: ReactNode }) => {
         <AppSidebar variant="inset" />
         <SidebarInset>
           <SiteHeader />
-          {children}
+          <TooltipProvider>{children}</TooltipProvider>
         </SidebarInset>
       </SidebarProvider>
     </>

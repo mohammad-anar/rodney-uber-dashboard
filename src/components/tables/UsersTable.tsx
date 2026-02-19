@@ -9,7 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { IUser } from "@/type/type";
+import { IUser, USER_ROLES, UserStatus } from "@/type/type";
 import { IconBan, IconEye } from "@tabler/icons-react";
 import { Loader, Search } from "lucide-react";
 import { useState } from "react";
@@ -17,6 +17,9 @@ import UserDetailsCard from "../cards/UserDetailsCard";
 import { DeleteUserButton } from "../dialogue/UserDeleteDialogue";
 import { MyModal } from "../shared/MyModal";
 import { BanUserButton } from "../dialogue/UserBanDialogue";
+import { useUpdateUserByIdMutation } from "@/redux/service/user/userApi";
+import { toast } from "sonner";
+import { ActiveUserButton } from "../dialogue/UserActiveDialogue";
 
 interface UsersTableProps {
   users?: IUser[];
@@ -34,14 +37,48 @@ export function UsersTable({
   const [open, setOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<IUser | null>(null);
 
+  const [updateUser, { isLoading: updateLoading }] =
+    useUpdateUserByIdMutation();
+
   const handleDelete = (id: string) => {
-    console.log("Deleting user with ID:", id);
-    // Call your API to delete here
+    const payload = {
+      status: UserStatus.DELETED,
+    };
+    const formData = new FormData();
+
+    formData.append("data", JSON.stringify(payload));
+    toast.promise(updateUser({ id, payload: formData }).unwrap(), {
+      loading: "Deleting....",
+      success: "User deleted successfully!",
+      error: "Failed to delete user!",
+    });
   };
 
   const handleSuspend = (id: string) => {
-    console.log("Suspending user with ID:", id);
-    // Call your API to suspend here
+    const payload = {
+      status: UserStatus.BLOCKED,
+    };
+    const formData = new FormData();
+
+    formData.append("data", JSON.stringify(payload));
+    toast.promise(updateUser({ id, payload: formData }).unwrap(), {
+      loading: "Blocking....",
+      success: "User blocked!",
+      error: "Failed to block user!",
+    });
+  };
+  const handleActive = (id: string) => {
+    const payload = {
+      status: UserStatus.ACTIVE,
+    };
+    const formData = new FormData();
+
+    formData.append("data", JSON.stringify(payload));
+    toast.promise(updateUser({ id, payload: formData }).unwrap(), {
+      loading: "Making active....",
+      success: "User is Active now!",
+      error: "Failed to active user!",
+    });
   };
 
   return (
@@ -87,61 +124,83 @@ export function UsersTable({
             </TableBody>
           ) : (
             <TableBody>
-              {users?.map((user) => (
-                <TableRow
-                  key={user._id}
-                  className="border-b last:border-b-0 hover:bg-gray-50"
-                >
-                  <TableCell className="px-4 py-3">{user.name}</TableCell>
-                  <TableCell className="px-4 py-3 text-gray-700 text-center">
-                    {user.name}
-                  </TableCell>
-                  <TableCell className="px-4 py-3 text-gray-700 text-center">
-                    {user.email}
-                  </TableCell>
+              {users && users?.length > 0 ? (
+                users?.map((user) => (
+                  <TableRow
+                    key={user._id}
+                    className="border-b last:border-b-0 hover:bg-gray-50"
+                  >
+                    <TableCell className="px-4 py-3">{user.name}</TableCell>
+                    <TableCell className="px-4 py-3 text-gray-700 text-center">
+                      {user.name}
+                    </TableCell>
+                    <TableCell className="px-4 py-3 text-gray-700 text-center">
+                      {user.email}
+                    </TableCell>
 
-                  <TableCell className="px-4 py-3 text-center">
-                    <Badge
-                      className={
-                        user.status === "ACTIVE"
-                          ? "bg-green-50 text-green-700 border-green-300"
-                          : "bg-orange-50 text-orange-700 border-orange-200"
-                      }
-                      variant="outline"
-                    >
-                      {user.status}
-                    </Badge>
-                  </TableCell>
-
-                  <TableCell className="px-4 py-3 text-center">
-                    <div className="flex items-center justify-center gap-5">
-                      {/* View User */}
-                      <div
-                        className="bg-transparent cursor-pointer hover:bg-gray-300 p-2 duration-300 rounded-full"
-                        onClick={() => {
-                          setOpen(true);
-                          setSelectedUser(user);
-                        }}
+                    <TableCell className="px-4 py-3 text-center">
+                      <Badge
+                        className={
+                          user.status === "ACTIVE"
+                            ? "bg-green-50 text-green-700 border-green-300"
+                            : "bg-orange-50 text-orange-700 border-orange-200"
+                        }
+                        variant="outline"
                       >
-                        <IconEye color="blue" size={25} />
+                        {user.status}
+                      </Badge>
+                    </TableCell>
+
+                    <TableCell className="px-4 py-3 text-center">
+                      <div className="flex items-center justify-center gap-5">
+                        {/* View User */}
+                        <div
+                          className="bg-transparent cursor-pointer hover:bg-gray-300 p-2 duration-300 rounded-full"
+                          onClick={() => {
+                            setOpen(true);
+                            setSelectedUser(user);
+                          }}
+                        >
+                          <IconEye color="blue" size={25} />
+                        </div>
+
+                        {/* Suspend User */}
+                        {user.status !== UserStatus.DELETED &&
+                          user.status !== UserStatus.BLOCKED && (
+                            <BanUserButton
+                              userId={user._id}
+                              onDelete={handleSuspend}
+                            />
+                          )}
+
+                        {/* Delete User */}
+                        {user.status === UserStatus.DELETED ||
+                          user.status === UserStatus.BLOCKED || (
+                            <DeleteUserButton
+                              userId={user._id}
+                              userName={user.name}
+                              onDelete={handleDelete}
+                            />
+                          )}
+
+                        {(user.status === UserStatus.DELETED ||
+                          user.status === UserStatus.BLOCKED) && (
+                          <ActiveUserButton
+                            userId={user._id}
+                            onDelete={handleActive}
+                          />
+                        )}
                       </div>
-
-                      {/* Suspend User */}
-                      <BanUserButton
-                        userId={user._id}
-                        onDelete={handleSuspend}
-                      />
-
-                      {/* Delete User */}
-                      <DeleteUserButton
-                        userId={user._id}
-                        userName={user.name}
-                        onDelete={handleDelete}
-                      />
-                    </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={5} className="text-center py-6">
+                    <p>No users found!</p>
                   </TableCell>
                 </TableRow>
-              ))}
+              )}
             </TableBody>
           )}
         </Table>
