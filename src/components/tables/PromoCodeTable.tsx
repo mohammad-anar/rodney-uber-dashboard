@@ -24,50 +24,26 @@ import {
 interface Promo {
   promoCode: string;
   source: string;
-  status: "Active" | "Inactive" | "Expired";
+  isActive: boolean;
   email: string;
+  discountType: string;
+  discountValue: string | number;
 }
 
 interface PromoTableProps {
   promos?: Promo[];
 }
 
-const tableHeaders = ["Promo Code", "Source", "Status", "Email", "Actions"];
-
-const defaultPromos: Promo[] = [
-  {
-    promoCode: "UBR9XK21A",
-    source: "Uber",
-    status: "Active",
-    email: "john@gmail.com",
-  },
-  {
-    promoCode: "LYF7QZ88P",
-    source: "Lyft",
-    status: "Expired",
-    email: "sarah.khan@gmail.com",
-  },
-  {
-    promoCode: "UBR3MNA92",
-    source: "Uber",
-    status: "Active",
-    email: "rahim.ahmed@gmail.com",
-  },
-  {
-    promoCode: "LYF8TR44K",
-    source: "Lyft",
-    status: "Inactive",
-    email: "maria.silva@gmail.com",
-  },
-  {
-    promoCode: "UBR5XP77C",
-    source: "Uber",
-    status: "Active",
-    email: "alex.choi@gmail.com",
-  },
+const tableHeaders = [
+  "Promo Code",
+  "Source",
+  "Status",
+  "Discount Type",
+  "Discount Value",
+  "Actions",
 ];
 
-export function PromoCodeTable({ promos = defaultPromos }: PromoTableProps) {
+export function PromoCodeTable({ promos }: PromoTableProps) {
   const [open, setOpen] = useState(false);
   const handleDelete = (id: string) => {
     console.log({ id });
@@ -139,38 +115,42 @@ export function PromoCodeTable({ promos = defaultPromos }: PromoTableProps) {
                 className="border-b last:border-b-0 hover:bg-gray-50"
               >
                 <TableCell className="px-4 py-3">{promo.promoCode}</TableCell>
-                <TableCell className="px-4 py-3">{promo.source}</TableCell>
-
-                <TableCell className="px-4 py-3 text-gray-700 text-center">
-                  {promo.email}
+                <TableCell className="px-4 py-3 flex items-center justify-center">
+                  {promo.source}
                 </TableCell>
 
-                <TableCell className="px-4 py-3 text-center">
+                <TableCell className="px-4 py-3 text-center ">
                   <Select
-                    defaultValue={promo.status}
+                    defaultValue={
+                      promo.isActive === true ? "Active" : "InActive"
+                    }
                     onValueChange={(value) => {
                       // handle status change here
                       console.log("New status:", value);
                     }}
                   >
                     <SelectTrigger
-                      className={`w-[120px] border ${
-                        promo.status === "Active"
+                      className={`w-[120px] border mx-auto ${
+                        promo.isActive === true
                           ? "bg-green-50 text-green-700 border-green-300"
-                          : promo.status === "Expired"
-                            ? "bg-orange-50 text-orange-700 border-orange-300"
-                            : "bg-gray-50 text-gray-700 border-gray-300"
+                          : "bg-orange-50 text-orange-700 border-orange-300"
                       }`}
                     >
                       <SelectValue placeholder="Status" />
                     </SelectTrigger>
 
                     <SelectContent>
-                      <SelectItem value="Active">Active</SelectItem>
-                      <SelectItem value="Expired">Expired</SelectItem>
+                      <SelectItem value={"Active"}>Active</SelectItem>
                       <SelectItem value="Inactive">Inactive</SelectItem>
                     </SelectContent>
                   </Select>
+                </TableCell>
+
+                <TableCell className="px-4 py-3 text-gray-700 text-center">
+                  {promo.discountType}
+                </TableCell>
+                <TableCell className="px-4 py-3 text-gray-700 text-center">
+                  {promo.discountValue}
                 </TableCell>
 
                 <TableCell className="px-4 py-3 text-center">

@@ -1,8 +1,6 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import React from "react";
-
+import React, { useState, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -12,36 +10,28 @@ import { Textarea } from "@/components/ui/textarea";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
+  FormDescription,
   FormMessage,
 } from "@/components/ui/form";
-import { Card } from "@/components/ui/card";
-import { useState, useRef } from "react";
 import { Upload, X } from "lucide-react";
 import Image from "next/image";
 
 const videoFormSchema = z.object({
-  videoFile: z.instanceof(File, { message: "Video file is required" }),
-  thumbnailFile: z.instanceof(File, { message: "Thumbnail file is required" }),
-  title: z
-    .string()
-    .min(1, "Title is required")
-    .min(3, "Title must be at least 3 characters"),
-  description: z
-    .string()
-    .min(1, "Description is required")
-    .min(10, "Description must be at least 10 characters"),
+  url: z.instanceof(File).optional(),
+  thumbnail: z.instanceof(File).optional(),
+  title: z.string().min(3, "Title must be at least 3 characters"),
+  description: z.string().min(10, "Description must be at least 10 characters"),
 });
 
-type VideoFormValues = z.infer<typeof videoFormSchema | any>;
+type VideoFormValues = z.infer<typeof videoFormSchema>;
 
 interface VideoEditFormProps {
   initialData: {
-    videoUrl: string;
-    thumbnailUrl: string;
+    url: string;
+    thumbnail: string;
     title: string;
     description: string;
   };
@@ -54,53 +44,77 @@ export function VideoEditForm({
   onSave,
   onCancel,
 }: VideoEditFormProps) {
-  const [videoPreview, setVideoPreview] = useState<string>("");
-  const [thumbnailPreview, setThumbnailPreview] = useState<string>("");
+  const [videoPreview, setVideoPreview] = useState<string>(
+    initialData.url || "",
+  );
+  const [thumbnailPreview, setThumbnailPreview] = useState<string>(
+    initialData.thumbnail || "",
+  );
+
+  console.log({ thumbnailPreview });
+
   const videoInputRef = useRef<HTMLInputElement>(null);
   const thumbnailInputRef = useRef<HTMLInputElement>(null);
 
   const form = useForm<VideoFormValues>({
     resolver: zodResolver(videoFormSchema),
     defaultValues: {
-      videoFile: undefined,
-      thumbnailFile: undefined,
+      url: undefined,
+      thumbnail: undefined,
       title: initialData.title,
       description: initialData.description,
     },
   });
 
   const onSubmit = (data: VideoFormValues) => {
+    console.log("Form Values:", data);
     onSave(data);
   };
 
+  // ================= VIDEO =================
+
   const handleVideoFileChange = (file: File) => {
-    if (file && file.type.startsWith("video/")) {
+    if (file.type.startsWith("video/")) {
       const reader = new FileReader();
-      reader.onload = () => {
-        setVideoPreview(reader.result as string);
-      };
+      reader.onload = () => setVideoPreview(reader.result as string);
       reader.readAsDataURL(file);
-      form.setValue("videoFile", file);
+
+      form.setValue("url", file);
+      form.trigger("url");
     } else {
-      form.setError("videoFile", {
+      form.setError("url", {
         message: "Please select a valid video file",
       });
     }
   };
 
+  const removeVideoPreview = () => {
+    setVideoPreview("");
+    form.setValue("url", undefined);
+    if (videoInputRef.current) videoInputRef.current.value = "";
+  };
+
+  // ================= THUMBNAIL =================
+
   const handleThumbnailFileChange = (file: File) => {
-    if (file && file.type.startsWith("image/")) {
+    if (file.type.startsWith("image/")) {
       const reader = new FileReader();
-      reader.onload = () => {
-        setThumbnailPreview(reader.result as string);
-      };
+      reader.onload = () => setThumbnailPreview(reader.result as string);
       reader.readAsDataURL(file);
-      form.setValue("thumbnailFile", file);
+
+      form.setValue("thumbnail", file);
+      form.trigger("thumbnail");
     } else {
-      form.setError("thumbnailFile", {
+      form.setError("thumbnail", {
         message: "Please select a valid image file",
       });
     }
+  };
+
+  const removeThumbnailPreview = () => {
+    setThumbnailPreview("");
+    form.setValue("thumbnail", undefined);
+    if (thumbnailInputRef.current) thumbnailInputRef.current.value = "";
   };
 
   const handleDragOver = (e: React.DragEvent) => {
@@ -108,51 +122,27 @@ export function VideoEditForm({
     e.stopPropagation();
   };
 
-  const handleVideoDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    const files = e.dataTransfer.files;
-    if (files.length > 0) {
-      handleVideoFileChange(files[0]);
-    }
-  };
-
-  const handleThumbnailDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    const files = e.dataTransfer.files;
-    if (files.length > 0) {
-      handleThumbnailFileChange(files[0]);
-    }
-  };
-
-  const removeVideoPreview = () => {
-    setVideoPreview("");
-    form.setValue("videoFile", null);
-    if (videoInputRef.current) videoInputRef.current.value = "";
-  };
-
-  const removeThumbnailPreview = () => {
-    setThumbnailPreview("");
-    form.setValue("thumbnailFile", null);
-    if (thumbnailInputRef.current) thumbnailInputRef.current.value = "";
-  };
-
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        {/* Video File Upload */}
+        {/* ================= VIDEO UPLOAD ================= */}
         <FormField
           control={form.control}
-          name="videoFile"
+          name="url"
           render={() => (
             <FormItem>
-              <FormLabel>Video File</FormLabel>
+              <FormLabel>Video</FormLabel>
               <FormControl>
                 <div
                   onDragOver={handleDragOver}
-                  onDrop={handleVideoDrop}
-                  className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-8 transition-colors hover:border-muted-foreground/50 cursor-pointer"
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    if (e.dataTransfer.files.length > 0) {
+                      handleVideoFileChange(e.dataTransfer.files[0]);
+                    }
+                  }}
+                  onClick={() => videoInputRef.current?.click()}
+                  className="border-2 border-dashed rounded-lg p-8 cursor-pointer"
                 >
                   {videoPreview ? (
                     <div className="space-y-4">
@@ -164,167 +154,134 @@ export function VideoEditForm({
                       <button
                         type="button"
                         onClick={removeVideoPreview}
-                        className="flex items-center gap-2 text-sm text-destructive hover:text-destructive/80"
+                        className="flex items-center gap-2 text-sm text-destructive"
                       >
-                        <X className="w-4 h-4" />
-                        Remove video
+                        <X className="w-4 h-4" /> Remove video
                       </button>
                     </div>
                   ) : (
-                    <div
-                      onClick={() => videoInputRef.current?.click()}
-                      className="flex flex-col items-center justify-center gap-2"
-                    >
+                    <div className="flex flex-col items-center gap-2 text-center">
                       <Upload className="w-8 h-8 text-muted-foreground" />
-                      <div className="text-center">
-                        <p className="font-semibold">
-                          Drag and drop your video here
-                        </p>
-                        <p className="text-sm text-muted-foreground">
-                          or click to select a file
-                        </p>
-                      </div>
+                      <p>Drag & drop or click to upload video</p>
                     </div>
                   )}
+
                   <input
                     ref={videoInputRef}
                     type="file"
                     accept="video/*"
                     className="hidden"
-                    onChange={(e) => {
-                      if (e.target.files?.[0]) {
-                        handleVideoFileChange(e.target.files[0]);
-                      }
-                    }}
+                    onChange={(e) =>
+                      e.target.files && handleVideoFileChange(e.target.files[0])
+                    }
                   />
                 </div>
               </FormControl>
-              <FormDescription>
-                Select a video file (MP4, WebM, etc.)
-              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
 
-        {/* Thumbnail File Upload */}
+        {/* ================= THUMBNAIL ================= */}
         <FormField
           control={form.control}
-          name="thumbnailFile"
+          name="thumbnail"
           render={() => (
             <FormItem>
-              <FormLabel>Thumbnail Image</FormLabel>
+              <FormLabel>Thumbnail</FormLabel>
               <FormControl>
                 <div
                   onDragOver={handleDragOver}
-                  onDrop={handleThumbnailDrop}
-                  className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-8 transition-colors hover:border-muted-foreground/50 cursor-pointer"
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    if (e.dataTransfer.files.length > 0) {
+                      handleThumbnailFileChange(e.dataTransfer.files[0]);
+                    }
+                  }}
+                  onClick={() => thumbnailInputRef.current?.click()}
+                  className="border-2 border-dashed rounded-lg p-8 cursor-pointer"
                 >
                   {thumbnailPreview ? (
                     <div className="space-y-4">
-                      <Image
+                      <img
+                        src={thumbnailPreview}
                         width={300}
                         height={300}
-                        src={thumbnailPreview || "/placeholder.svg"}
                         alt="Thumbnail preview"
                         className="w-full max-h-48 rounded object-cover"
                       />
                       <button
                         type="button"
                         onClick={removeThumbnailPreview}
-                        className="flex items-center gap-2 text-sm text-destructive hover:text-destructive/80"
+                        className="flex items-center gap-2 text-sm text-destructive"
                       >
-                        <X className="w-4 h-4" />
-                        Remove thumbnail
+                        <X className="w-4 h-4" /> Remove thumbnail
                       </button>
                     </div>
                   ) : (
-                    <div
-                      onClick={() => thumbnailInputRef.current?.click()}
-                      className="flex flex-col items-center justify-center gap-2"
-                    >
+                    <div className="flex flex-col items-center gap-2 text-center">
                       <Upload className="w-8 h-8 text-muted-foreground" />
-                      <div className="text-center">
-                        <p className="font-semibold">
-                          Drag and drop your thumbnail here
-                        </p>
-                        <p className="text-sm text-muted-foreground">
-                          or click to select a file
-                        </p>
-                      </div>
+                      <p>Drag & drop or click to upload thumbnail</p>
                     </div>
                   )}
+
                   <input
                     ref={thumbnailInputRef}
                     type="file"
                     accept="image/*"
                     className="hidden"
-                    onChange={(e) => {
-                      if (e.target.files?.[0]) {
-                        handleThumbnailFileChange(e.target.files[0]);
-                      }
-                    }}
+                    onChange={(e) =>
+                      e.target.files &&
+                      handleThumbnailFileChange(e.target.files[0])
+                    }
                   />
                 </div>
               </FormControl>
-              <FormDescription>
-                Select an image file (JPG, PNG, WebP, etc.)
-              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
 
-        {/* Title Field */}
+        {/* ================= TITLE ================= */}
         <FormField
           control={form.control}
           name="title"
-          render={({ field }: any) => (
+          render={({ field }) => (
             <FormItem>
               <FormLabel>Title</FormLabel>
               <FormControl>
-                <Input
-                  placeholder="Enter video title"
-                  {...field}
-                  className="focus:ring-2"
-                />
+                <Input {...field} placeholder="Enter video title" />
               </FormControl>
-              <FormDescription>The main title of the video</FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
 
-        {/* Description Field */}
+        {/* ================= DESCRIPTION ================= */}
         <FormField
           control={form.control}
           name="description"
-          render={({ field }: any) => (
+          render={({ field }) => (
             <FormItem>
               <FormLabel>Description</FormLabel>
               <FormControl>
                 <Textarea
-                  placeholder="Enter video description"
-                  className="min-h-24 resize-none focus:ring-2"
                   {...field}
+                  className="min-h-24 resize-none"
+                  placeholder="Enter video description"
                 />
               </FormControl>
-              <FormDescription>
-                A detailed description of the video
-              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
 
-        {/* Action Buttons */}
+        {/* ================= ACTIONS ================= */}
         <div className="flex justify-end gap-3 pt-4">
           <Button type="button" variant="outline" onClick={onCancel}>
             Cancel
           </Button>
-          <Button type="submit" disabled={form.formState.isSubmitting}>
-            {form.formState.isSubmitting ? "Saving..." : "Save Changes"}
-          </Button>
+          <Button type="submit">Save Changes</Button>
         </div>
       </form>
     </Form>
