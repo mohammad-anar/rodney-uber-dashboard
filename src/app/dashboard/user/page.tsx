@@ -3,44 +3,17 @@
 import UserStatsCard from "@/components/cards/UserStatsCard";
 import { MyPagination } from "@/components/shared/MyPagination";
 import { UsersTable } from "@/components/tables/UsersTable";
-import { useGetAllUsersQuery } from "@/redux/service/user/userApi";
-import { Play, Shield, Ticket, Users } from "lucide-react";
-import { useEffect, useState } from "react";
+import {
+  useGetAllUsersQuery,
+  useGetUsersStatsQuery,
+} from "@/redux/service/user/userApi";
+import { Users, UserCheck, UserX, UserMinus } from "lucide-react";
+import { useState } from "react";
 
 const UserPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [searchTerm, setSearchTerm] = useState("");
-  const metrics = [
-    {
-      label: "Total Users",
-      value: "2,847",
-      icon: Users,
-      bgColor: "bg-blue-100",
-      iconColor: "text-blue-600",
-    },
-    {
-      label: "Completed Videos",
-      value: "1,924",
-      icon: Play,
-      bgColor: "bg-green-100",
-      iconColor: "text-green-600",
-    },
-    {
-      label: "Promo Codes Used",
-      value: "1,156",
-      icon: Ticket,
-      bgColor: "bg-purple-100",
-      iconColor: "text-purple-600",
-    },
-    {
-      label: "Blocked Users",
-      value: "23",
-      icon: Shield,
-      bgColor: "bg-red-100",
-      iconColor: "text-red-600",
-    },
-  ];
 
   const params: any = {
     page: currentPage,
@@ -58,8 +31,48 @@ const UserPage = () => {
       isLoading,
     }),
   });
+  const { data: stats, isLoading: statsLoading } = useGetUsersStatsQuery(
+    undefined,
+    {
+      selectFromResult: ({ data, isLoading }) => ({
+        data: data?.data ?? [], // your formatted array from backend
+        isLoading,
+      }),
+    },
+  );
 
   const totalPage = data?.meta?.totalPage || 1;
+
+  const metrics = [
+    {
+      label: "Total Users",
+      value: stats.total.toLocaleString(), // 2,847
+      icon: Users,
+      bgColor: "bg-blue-100",
+      iconColor: "text-blue-600",
+    },
+    {
+      label: "Active Users",
+      value: stats.active.toLocaleString(),
+      icon: UserCheck,
+      bgColor: "bg-green-100",
+      iconColor: "text-green-600",
+    },
+    {
+      label: "Blocked Users",
+      value: stats.blocked.toLocaleString(),
+      icon: UserMinus,
+      bgColor: "bg-orange-100",
+      iconColor: "text-orange-600",
+    },
+    {
+      label: "Deleted Users",
+      value: stats.deleted.toLocaleString(),
+      icon: UserX,
+      bgColor: "bg-red-100",
+      iconColor: "text-red-600",
+    },
+  ];
 
   return (
     <div className="p-5">
