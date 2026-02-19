@@ -73,13 +73,15 @@ const UserPage = () => {
         isLoading={isLoading}
         users={data?.data || []}
       />
-      <div className="mt-5">
-        <MyPagination
-          currentPage={currentPage}
-          onPageChange={(e) => setCurrentPage(e)}
-          totalPages={totalPage}
-        />
-      </div>
+      {totalPage > 1 && (
+        <div className="mt-5">
+          <MyPagination
+            currentPage={currentPage}
+            onPageChange={(e) => setCurrentPage(e)}
+            totalPages={totalPage}
+          />
+        </div>
+      )}
     </div>
   );
 };

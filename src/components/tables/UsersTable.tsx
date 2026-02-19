@@ -9,13 +9,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { IconBan, IconEye, IconTrash } from "@tabler/icons-react";
-import { Loader, Loader2, Search } from "lucide-react";
-import { useState } from "react";
-import { MyModal } from "../shared/MyModal";
-import { useGetAllUsersQuery } from "@/redux/service/user/userApi";
-import UserDetailsCard from "../cards/UserDetailsCard";
 import { IUser } from "@/type/type";
+import { IconBan, IconEye } from "@tabler/icons-react";
+import { Loader, Search } from "lucide-react";
+import { useState } from "react";
+import UserDetailsCard from "../cards/UserDetailsCard";
+import { DeleteUserButton } from "../dialogue/UserDeleteDialogue";
+import { MyModal } from "../shared/MyModal";
+import { BanUserButton } from "../dialogue/UserBanDialogue";
 
 interface UsersTableProps {
   users?: IUser[];
@@ -31,17 +32,21 @@ export function UsersTable({
   setSearchTerm,
 }: UsersTableProps) {
   const [open, setOpen] = useState(false);
-  const [user, setUser] = useState<IUser | null>(null);
-  console.log(user);
+  const [selectedUser, setSelectedUser] = useState<IUser | null>(null);
 
   const handleDelete = (id: string) => {
-    console.log({ id });
+    console.log("Deleting user with ID:", id);
+    // Call your API to delete here
   };
+
   const handleSuspend = (id: string) => {
-    console.log({ id });
+    console.log("Suspending user with ID:", id);
+    // Call your API to suspend here
   };
+
   return (
     <div className="space-y-6 rounded-xl">
+      {/* Search */}
       <div className="flex items-center gap-3 w-full">
         <div className="flex-1 flex max-w-xl items-center gap-3 px-4 py-2 rounded-lg border border-gray-200 bg-white">
           <Search className="w-5 h-5 text-gray-400" />
@@ -54,6 +59,7 @@ export function UsersTable({
         </div>
       </div>
 
+      {/* Users Table */}
       <div className="border border-gray-300 rounded-lg overflow-hidden bg-white">
         <Table>
           <TableHeader>
@@ -61,7 +67,9 @@ export function UsersTable({
               {tableHeaders.map((title, idx) => (
                 <TableHead
                   key={title}
-                  className={`text-gray-700 uppercase font-semibold text-sm px-4 py-3 ${idx === 0 ? "text-left" : "text-center"}`}
+                  className={`text-gray-700 uppercase font-semibold text-sm px-4 py-3 ${
+                    idx === 0 ? "text-left" : "text-center"
+                  }`}
                 >
                   {title}
                 </TableHead>
@@ -107,27 +115,29 @@ export function UsersTable({
 
                   <TableCell className="px-4 py-3 text-center">
                     <div className="flex items-center justify-center gap-5">
+                      {/* View User */}
                       <div
                         className="bg-transparent cursor-pointer hover:bg-gray-300 p-2 duration-300 rounded-full"
                         onClick={() => {
-                          setOpen(!open);
-                          setUser(user);
+                          setOpen(true);
+                          setSelectedUser(user);
                         }}
                       >
                         <IconEye color="blue" size={25} />
                       </div>
-                      <div
-                        className="bg-transparent cursor-pointer hover:bg-gray-300 p-2 duration-300 rounded-full"
-                        onClick={() => handleSuspend(user._id)}
-                      >
-                        <IconBan color="red" size={16} />
-                      </div>
-                      <div
-                        className="bg-transparent cursor-pointer hover:bg-gray-300 p-2 duration-300 rounded-full"
-                        onClick={() => handleDelete(user._id)}
-                      >
-                        <IconTrash color="red" size={16} />
-                      </div>
+
+                      {/* Suspend User */}
+                      <BanUserButton
+                        userId={user._id}
+                        onDelete={handleSuspend}
+                      />
+
+                      {/* Delete User */}
+                      <DeleteUserButton
+                        userId={user._id}
+                        userName={user.name}
+                        onDelete={handleDelete}
+                      />
                     </div>
                   </TableCell>
                 </TableRow>
@@ -136,8 +146,10 @@ export function UsersTable({
           )}
         </Table>
       </div>
+
+      {/* User Details Modal */}
       <MyModal open={open} onOpenChange={(val: boolean) => setOpen(val)}>
-        <UserDetailsCard user={user as IUser} />
+        <UserDetailsCard user={selectedUser as IUser} />
       </MyModal>
     </div>
   );

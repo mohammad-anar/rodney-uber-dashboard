@@ -65,7 +65,9 @@ export default function UserDetailsCard({ user }: UserDetailsCardProps) {
                 {user.profilePhoto ? (
                   <Avatar className="w-20 h-20">
                     <AvatarImage src={user?.profilePhoto} alt="@maxleiter" />
-                    <AvatarFallback>{user.name.split("")[0]}</AvatarFallback>
+                    <AvatarFallback className="text-2xl font-bold">
+                      {user.name.split("")[0]}
+                    </AvatarFallback>
                   </Avatar>
                 ) : (
                   <User className="h-12 w-12 text-muted-foreground" />
