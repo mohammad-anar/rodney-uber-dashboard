@@ -8,7 +8,15 @@ const videoApi = baseApi.injectEndpoints({
         url: "/video",
         method: "GET",
       }),
-      providesTags: ["User"],
+      providesTags: ["Video"],
+    }),
+    getVideoCompletionLogs: builder.query({
+      query: (params) => ({
+        url: "/coupon-usage",
+        method: "GET",
+        params,
+      }),
+      providesTags: ["Video"],
     }),
     updateVideo: builder.mutation({
       query: ({ id, payload }: { id: string; payload: FormData }) => ({
@@ -16,9 +24,13 @@ const videoApi = baseApi.injectEndpoints({
         method: "PATCH",
         body: payload,
       }),
-      invalidatesTags: ["User"],
+      invalidatesTags: ["Video"],
     }),
   }),
 });
 
-export const { useGetVideoQuery, useUpdateVideoMutation } = videoApi;
+export const {
+  useGetVideoQuery,
+  useUpdateVideoMutation,
+  useGetVideoCompletionLogsQuery,
+} = videoApi;

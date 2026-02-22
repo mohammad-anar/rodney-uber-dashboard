@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { Badge } from "@/components/ui/badge";
@@ -9,98 +10,31 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Search } from "lucide-react";
+import { Loader, Search } from "lucide-react";
 
 interface VideoLogs {
   id: string;
   email: string;
-  watchDuration: string;
-  videoDuration: string;
-  status: "Completed" | "Not Completed";
+  coupon: any;
+  video: any;
+  createdAt: string;
+  updatedAt: string;
 }
 
 interface VideoLogsTableProps {
-  videoLogs?: VideoLogs[];
+  videoLogs: VideoLogs[];
+  isLoading: boolean;
+  setSearchTerm: (val: string) => void;
 }
 
-const tableHeaders = ["Email", "Watch Duration", "Video Duration", "Status"];
-
-const defaultLogs: VideoLogs[] = [
-  {
-    id: "1",
-    email: "user1@example.com",
-    watchDuration: "05:30",
-    videoDuration: "05:30",
-    status: "Completed",
-  },
-  {
-    id: "2",
-    email: "user2@example.com",
-    watchDuration: "02:15",
-    videoDuration: "05:00",
-    status: "Not Completed",
-  },
-  {
-    id: "3",
-    email: "user3@example.com",
-    watchDuration: "05:00",
-    videoDuration: "05:00",
-    status: "Completed",
-  },
-  {
-    id: "4",
-    email: "user4@example.com",
-    watchDuration: "03:45",
-    videoDuration: "06:00",
-    status: "Not Completed",
-  },
-  {
-    id: "5",
-    email: "user5@example.com",
-    watchDuration: "07:00",
-    videoDuration: "07:00",
-    status: "Completed",
-  },
-  {
-    id: "6",
-    email: "user6@example.com",
-    watchDuration: "04:20",
-    videoDuration: "05:00",
-    status: "Not Completed",
-  },
-  {
-    id: "7",
-    email: "user7@example.com",
-    watchDuration: "10:00",
-    videoDuration: "10:00",
-    status: "Completed",
-  },
-  {
-    id: "8",
-    email: "user8@example.com",
-    watchDuration: "06:30",
-    videoDuration: "07:00",
-    status: "Not Completed",
-  },
-  {
-    id: "9",
-    email: "user9@example.com",
-    watchDuration: "08:00",
-    videoDuration: "08:00",
-    status: "Completed",
-  },
-  {
-    id: "10",
-    email: "user10@example.com",
-    watchDuration: "01:50",
-    videoDuration: "05:00",
-    status: "Not Completed",
-  },
-];
+const tableHeaders = ["Email", "Coupon", "Source", "Status"];
 
 export function VideoLogsTable({
-  videoLogs = defaultLogs,
+  videoLogs,
+  isLoading,
+  setSearchTerm,
 }: VideoLogsTableProps) {
+  console.log({ videoLogs });
   return (
     <div className="space-y-6 rounded-xl">
       <div className="flex items-center gap-3 w-full">
@@ -108,6 +42,7 @@ export function VideoLogsTable({
           <Search className="w-5 h-5 text-gray-400" />
           <input
             type="text"
+            onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Search email..."
             className="flex-1 bg-transparent text-sm outline-none text-gray-700 placeholder:text-gray-400"
           />
@@ -129,35 +64,47 @@ export function VideoLogsTable({
             </TableRow>
           </TableHeader>
 
-          <TableBody>
-            {videoLogs?.map((log: VideoLogs) => (
-              <TableRow
-                key={log.id}
-                className="border-b last:border-b-0 hover:bg-gray-50"
-              >
-                <TableCell className="px-4 py-3">{log.email}</TableCell>
-                <TableCell className="px-4 py-3 text-gray-700 text-center">
-                  {log.watchDuration}
-                </TableCell>
-                <TableCell className="px-4 py-3 text-gray-700 text-center">
-                  {log.videoDuration}
-                </TableCell>
-
-                <TableCell className="px-4 py-3 text-center">
-                  <Badge
-                    className={
-                      log.status === "Completed"
-                        ? "bg-green-50 text-green-600 border-green-300"
-                        : "bg-orange-50 text-orange-600 border-orange-200"
-                    }
-                    variant="outline"
-                  >
-                    {log.status}
-                  </Badge>
+          {isLoading ? (
+            <TableBody>
+              <TableRow className="border-b last:border-b-0 hover:bg-gray-50">
+                <TableCell colSpan={3} className="px-4 py-3">
+                  <div className="flex items-center justify-center">
+                    <Loader className="animate-spin" />
+                  </div>
                 </TableCell>
               </TableRow>
-            ))}
-          </TableBody>
+            </TableBody>
+          ) : (
+            <TableBody>
+              {videoLogs?.map((log: VideoLogs) => (
+                <TableRow
+                  key={log.id}
+                  className="border-b last:border-b-0 hover:bg-gray-50"
+                >
+                  <TableCell className="px-4 py-3">{log.email}</TableCell>
+                  <TableCell className="px-4 py-3 text-gray-700 text-center">
+                    {log?.coupon?.promoCode || "Didn't get"}
+                  </TableCell>
+                  <TableCell className="px-4 py-3 text-gray-700 text-center">
+                    {log?.coupon?.source || "Uber"}
+                  </TableCell>
+
+                  <TableCell className="px-4 py-3 text-center">
+                    <Badge
+                      className={
+                        "Completed" === "Completed"
+                          ? "bg-green-50 text-green-600 border-green-300"
+                          : "bg-orange-50 text-orange-600 border-orange-200"
+                      }
+                      variant="outline"
+                    >
+                      Completed
+                    </Badge>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          )}
         </Table>
       </div>
     </div>
