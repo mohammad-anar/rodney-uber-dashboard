@@ -69,7 +69,6 @@ export function PromoCodeTable({ promos }: PromoTableProps) {
             <SelectContent>
               <SelectItem value={"All Status"}>All Status</SelectItem>
               <SelectItem value="Active">Active</SelectItem>
-              <SelectItem value="Expired">Expired</SelectItem>
               <SelectItem value="Inactive">Inactive</SelectItem>
             </SelectContent>
           </Select>
@@ -85,9 +84,9 @@ export function PromoCodeTable({ promos }: PromoTableProps) {
             </SelectTrigger>
 
             <SelectContent>
-              <SelectItem value={"All Source"}>All Status</SelectItem>
-              <SelectItem value="Uber">Active</SelectItem>
-              <SelectItem value="Lyft">Expired</SelectItem>
+              <SelectItem value={"All Source"}>All Source</SelectItem>
+              <SelectItem value="Uber">Uber</SelectItem>
+              <SelectItem value="Lyft">Lyft</SelectItem>
             </SelectContent>
           </Select>
         </div>
