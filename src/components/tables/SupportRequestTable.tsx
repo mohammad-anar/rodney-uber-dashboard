@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useState } from "react";
@@ -23,6 +24,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { SupportDetails } from "@/app/dashboard/support/SupportDetails";
+import { useUpdateSupportRequestMutation } from "@/redux/service/support/support";
+import { toast } from "sonner";
 
 /* ================= TYPES ================= */
 
@@ -57,11 +60,21 @@ const tableHeaders = ["Name", "Email", "Status", "Submitted At", "Actions"];
 
 export function SupportRequestTable({ submitRequests }: SupportRequestProps) {
   const [open, setOpen] = useState(false);
+  const [details, setDetails] = useState<any>();
 
-  const handleStatusChange = (
-    id: string,
-    status: "Approved" | "Rejected" | "UnderReview",
-  ) => {};
+  // api
+  const [updateStatus] = useUpdateSupportRequestMutation();
+
+  const handleStatusChange = (id: string, status: HelpRequestStatus) => {
+    console.log(id, status);
+    const formData = new FormData();
+    formData.append("data", JSON.stringify({ status }));
+    toast.promise(updateStatus({ id, payload: formData }).unwrap(), {
+      loading: "Updating status...",
+      success: "Updated successfully",
+      error: (err) => err.message || err.data.message,
+    });
+  };
 
   return (
     <div className="space-y-6 rounded-xl">
@@ -105,7 +118,9 @@ export function SupportRequestTable({ submitRequests }: SupportRequestProps) {
                 <TableCell className="text-center">
                   <StatusSelect
                     value={request.status}
-                    onChange={(value) => handleStatusChange(request._id, value)}
+                    onChange={(value: any) =>
+                      handleStatusChange(request._id, value)
+                    }
                   />
                 </TableCell>
 
@@ -117,7 +132,10 @@ export function SupportRequestTable({ submitRequests }: SupportRequestProps) {
                   <Button
                     variant="link"
                     className="text-primary cursor-pointer"
-                    onClick={() => setOpen(true)}
+                    onClick={() => {
+                      setOpen(true);
+                      setDetails(request);
+                    }}
                   >
                     View Details
                   </Button>
@@ -130,7 +148,7 @@ export function SupportRequestTable({ submitRequests }: SupportRequestProps) {
 
       {/* Modal */}
       <MyModal open={open} onOpenChange={setOpen}>
-        <SupportDetails />
+        <SupportDetails details={details} />
       </MyModal>
     </div>
   );
@@ -139,11 +157,11 @@ export function SupportRequestTable({ submitRequests }: SupportRequestProps) {
 export function StatusSelect({ value, onChange }: StatusSelectProps) {
   const getStatusStyles = (status: string) => {
     switch (status) {
-      case "Approved":
+      case HelpRequestStatus.APPROVED:
         return "bg-green-50 text-green-700 border-green-300";
-      case "Rejected":
+      case HelpRequestStatus.REJECTED:
         return "bg-orange-50 text-orange-700 border-orange-300";
-      case "UnderReview":
+      case HelpRequestStatus.UNDER_REVIEW:
         return "bg-yellow-50 text-yellow-700 border-yellow-300";
       default:
         return "";
@@ -152,13 +170,15 @@ export function StatusSelect({ value, onChange }: StatusSelectProps) {
 
   return (
     <Select value={value} onValueChange={onChange}>
-      <SelectTrigger className={`w-[140px] ${getStatusStyles(value)}`}>
+      <SelectTrigger className={`w-[140px] mx-auto ${getStatusStyles(value)}`}>
         <SelectValue />
       </SelectTrigger>
       <SelectContent>
-        <SelectItem value="Approved">Approved</SelectItem>
-        <SelectItem value="UnderReview">Under Review</SelectItem>
-        <SelectItem value="Rejected">Rejected</SelectItem>
+        <SelectItem value={HelpRequestStatus.APPROVED}>Approved</SelectItem>
+        <SelectItem value={HelpRequestStatus.UNDER_REVIEW}>
+          Under Review
+        </SelectItem>
+        <SelectItem value={HelpRequestStatus.REJECTED}>Rejected</SelectItem>
       </SelectContent>
     </Select>
   );

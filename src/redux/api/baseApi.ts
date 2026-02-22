@@ -1,26 +1,33 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import type {
+import {
   BaseQueryFn,
   FetchArgs,
   FetchBaseQueryError,
-} from "@reduxjs/toolkit/query";
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+  createApi,
+  fetchBaseQuery,
+} from "@reduxjs/toolkit/query/react";
+import type { RootState } from "../store";
+import { setAccessToken, logout } from "../features/auth";
 import Cookies from "js-cookie";
-import { setAccessToken, setRefreshToken } from "../features/auth";
-import { RootState } from "../store";
 
-const baseQuery = fetchBaseQuery({
+// 🔹 Base query WITH access token
+const baseQueryWithAuth = fetchBaseQuery({
   baseUrl: process.env.NEXT_PUBLIC_API_BASE || "http://localhost:5000/api/v1",
-  prepareHeaders: (headers, { getState, endpoint }) => {
-    if (endpoint === "refreshToken") {
-      return headers;
+  credentials: "include",
+  prepareHeaders: (headers, { getState }) => {
+    const accessToken = (getState() as RootState).auth.accessToken;
+
+    if (accessToken) {
+      headers.set("Authorization", `Bearer ${accessToken}`);
     }
-    const token = (getState() as RootState).auth?.accessToken;
-    if (token) {
-      headers.set("Authorization", `Bearer ${token}`);
-    }
+
     return headers;
   },
+});
+
+// 🔹 Base query WITHOUT any auto headers
+const baseQueryRaw = fetchBaseQuery({
+  baseUrl: process.env.NEXT_PUBLIC_API_BASE || "http://localhost:5000/api/v1",
   credentials: "include",
 });
 
@@ -29,57 +36,52 @@ const baseQueryWithReauth: BaseQueryFn<
   unknown,
   FetchBaseQueryError
 > = async (args, api, extraOptions) => {
-  // 1️⃣ Try the original request
-  let result = await baseQuery(args, api, extraOptions);
+  // 1️⃣ Try normal request
+  let result = await baseQueryWithAuth(args, api, extraOptions);
 
-  if (result.error && result.error.status === 401) {
-    try {
-      const state = api.getState() as RootState;
-      const refreshToken = state.auth?.refreshToken;
+  // 2️⃣ If access token expired
+  if (result.error?.status === 401) {
+    const state = api.getState() as RootState;
+    const refreshToken = state.auth.refreshToken;
 
-      if (!refreshToken) {
-        Cookies.remove("accessToken");
-        window.location.href = "/auth/login";
-        return result;
-      }
+    if (!refreshToken) {
+      api.dispatch(logout());
+      window.location.href = "/auth/login";
+      return result;
+    }
 
-      // 2️⃣ Call refresh-token
-      const refreshResult = await baseQuery(
-        {
-          url: "/refresh-token",
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${refreshToken}`,
-          },
+    console.log("Calling refresh with refreshToken");
+
+    // 3️⃣ Call refresh endpoint manually with refresh token
+    const refreshResult = await baseQueryRaw(
+      {
+        url: "/refresh-token",
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${refreshToken}`,
         },
-        api,
-        extraOptions,
-      );
+      },
+      api,
+      extraOptions,
+    );
 
-      // 3️⃣ Get new access token from refresh response
-      const newAccessToken = (refreshResult.data as any)?.data?.accessToken;
-      const newRefreshToken = (refreshResult.data as any)?.data?.refreshToken;
+    // 4️⃣ If refresh also failed → logout
+    if (refreshResult.error?.status === 401) {
+      api.dispatch(logout());
+      Cookies.remove("accessToken");
+      window.location.href = "/auth/login";
+      return result;
+    }
 
-      if (newAccessToken) {
-        api.dispatch(setAccessToken(newAccessToken));
-        if (newRefreshToken) {
-          api.dispatch(setRefreshToken(newRefreshToken));
-        }
+    const newAccessToken = (refreshResult.data as any)?.data?.accessToken;
 
-        // 4️⃣ Retry the original request with new access token
-        result = await baseQuery(args, api, extraOptions);
+    if (newAccessToken) {
+      api.dispatch(setAccessToken(newAccessToken));
 
-        // 5️⃣ If retry also fails with 401 → logout
-        if (result.error && result.error.status === 401) {
-          Cookies.remove("accessToken");
-          window.location.href = "/auth/login";
-        }
-      } else {
-        // No new token → logout
-        Cookies.remove("accessToken");
-        window.location.href = "/auth/login";
-      }
-    } catch (err) {
+      // 5️⃣ Retry original request
+      result = await baseQueryWithAuth(args, api, extraOptions);
+    } else {
+      api.dispatch(logout());
       Cookies.remove("accessToken");
       window.location.href = "/auth/login";
     }
@@ -94,5 +96,3 @@ export const baseApi = createApi({
   tagTypes: ["Auth", "User", "Coupon", "Support"],
   endpoints: () => ({}),
 });
-
-export default baseApi;

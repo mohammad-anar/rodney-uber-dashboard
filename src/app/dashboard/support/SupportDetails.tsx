@@ -1,33 +1,24 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useState } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import Link from "next/link";
 
 const statusConfig = {
-  pending: { bg: "bg-yellow-100", text: "text-yellow-800", label: "Pending" },
-  approved: { bg: "bg-green-100", text: "text-green-800", label: "Approved" },
-  rejected: { bg: "bg-red-100", text: "text-red-800", label: "Rejected" },
+  Rejected: {
+    bg: "bg-yellow-100",
+    text: "text-yellow-800",
+    label: "Pending",
+  },
+  Approved: { bg: "bg-green-100", text: "text-green-800", label: "Approved" },
+  UnderReview: { bg: "bg-red-100", text: "text-red-800", label: "Rejected" },
 };
 
-const sampleUser = {
-  id: "1",
-  name: "Sarah Johnson",
-  email: "sarah.johnson@example.com",
-  profileImage:
-    "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop",
-  status: "approved" as const,
-  submittedAt: "2024-02-10T14:30:00Z",
-  documents: [
-    "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800&h=800&fit=crop",
-    "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=800&h=800&fit=crop",
-  ],
-};
-
-export function SupportDetails() {
-  const user = sampleUser;
-
-  const statusInfo = statusConfig[user.status];
+export function SupportDetails({ details }: any) {
+  const statusInfo =
+    statusConfig[details?.status as keyof typeof statusConfig] ||
+    statusConfig.UnderReview;
 
   return (
     <div className=" bg-gray-50">
@@ -37,35 +28,26 @@ export function SupportDetails() {
           <div className="p-6 space-y-6">
             {/* Profile Section */}
             <div className="flex gap-6 items-start">
-              <div className="relative w-32 h-32 shrink-0">
-                <Image
-                  src={user.profileImage}
-                  alt={user.name}
-                  fill
-                  className="rounded-lg object-cover"
-                />
-              </div>
-
               <div className="flex-1 space-y-4">
                 <div>
                   <h2 className="text-2xl font-bold text-gray-900">
-                    {user.name}
+                    {details?.fullName}
                   </h2>
-                  <p className="text-gray-600 text-sm mt-1">{user.email}</p>
+                  <p className="text-gray-600 text-sm mt-1">{details?.email}</p>
                 </div>
 
                 <div className="flex items-center gap-3">
                   <span
                     className={`px-3 py-1 rounded-full text-sm font-medium ${statusInfo.bg} ${statusInfo.text}`}
                   >
-                    {statusInfo.label}
+                    {details.status}
                   </span>
                 </div>
 
                 <div className="pt-2">
                   <p className="text-sm text-gray-600">
                     <span className="font-medium">Submitted:</span>{" "}
-                    {new Date(user.submittedAt).toLocaleDateString("en-US", {
+                    {new Date(details.createdAt).toLocaleDateString("en-US", {
                       year: "numeric",
                       month: "long",
                       day: "numeric",
@@ -80,20 +62,23 @@ export function SupportDetails() {
             {/* Documents Section */}
             <div className="border-t border-gray-200 pt-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                Documents ({user.documents.length})
+                Documents ({details?.supportingDocument?.length})
               </h3>
 
               <div className="space-y-5">
-                {user.documents.length > 0 ? (
-                  user.documents.map((doc, index) => (
-                    <Image
-                      key={index}
-                      width={300}
-                      height={300}
-                      src={doc}
-                      alt="doc"
-                    />
-                  ))
+                {details?.supportingDocument?.length > 0 ? (
+                  details?.supportingDocument?.map(
+                    (doc: any, index: number) => (
+                      <Link
+                        key={index}
+                        href={doc}
+                        className="block text-sm underline text-blue-600"
+                        target="_blank"
+                      >
+                        Open document
+                      </Link>
+                    ),
+                  )
                 ) : (
                   <p className="text-gray-500 text-sm">
                     No documents available

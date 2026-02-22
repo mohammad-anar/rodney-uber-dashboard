@@ -11,7 +11,7 @@ const couponApi = baseApi.injectEndpoints({
       providesTags: ["Support"],
     }),
     updateSupportRequest: builder.mutation({
-      query: ({ id, payload }: { id: string; payload: FormData }) => ({
+      query: ({ id, payload }: { id: string; payload: any }) => ({
         url: `/help-request/${id}`,
         method: "PATCH",
         body: payload,
