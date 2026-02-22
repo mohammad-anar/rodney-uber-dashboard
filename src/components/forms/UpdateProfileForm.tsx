@@ -11,6 +11,11 @@ import Image from "next/image";
 import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { useUpdateUserByIdMutation } from "@/redux/service/user/userApi";
+import { toast } from "sonner";
+import { useAppSelector } from "@/redux/hooks/hooks";
+import { useDispatch } from "react-redux";
+import { setUser } from "@/redux/features/auth";
 
 // Validation schema
 const animalFormSchema = z.object({
@@ -22,9 +27,15 @@ const animalFormSchema = z.object({
 type AnimalFormValues = z.infer<typeof animalFormSchema>;
 
 export function EditProfileForm({}) {
+  const user = useAppSelector((state) => state?.auth?.user);
   const [dragActive, setDragActive] = useState(false);
-  const [preview, setPreview] = useState<string | null>(null);
+  const [preview, setPreview] = useState<string | null>(user?.profilePhoto);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const dispatch = useDispatch();
+
+  // api
+
+  const [updateUser] = useUpdateUserByIdMutation();
 
   const {
     register,
@@ -35,8 +46,8 @@ export function EditProfileForm({}) {
   } = useForm<AnimalFormValues>({
     resolver: zodResolver(animalFormSchema),
     defaultValues: {
-      name: "",
-      phone: "",
+      name: user?.name,
+      phone: user?.phone,
       image: null,
     },
   });
@@ -81,7 +92,25 @@ export function EditProfileForm({}) {
 
   // Handle form submission
   const handleFormSubmit = async (data: AnimalFormValues) => {
+    const { image, ...rest } = data;
     console.log(data);
+    try {
+      const formData = new FormData();
+
+      formData.append("data", JSON.stringify(rest));
+      formData.append("image", image as File);
+      toast.promise(updateUser({ id: user._id, payload: formData }).unwrap(), {
+        loading: "Updating...",
+        error: (errors) =>
+          errors.message || errors.data.message || "Failed to update",
+        success: (data) => {
+          dispatch(setUser({ user: data?.data }));
+          return data?.message;
+        },
+      });
+    } catch (error) {
+      console.log(error);
+    }
     reset();
     setPreview(null);
   };
@@ -132,12 +161,12 @@ export function EditProfileForm({}) {
           }`}
         >
           {preview ? (
-            <Image
-              src={preview || "/placeholder.svg"}
+            <img
+              src={preview}
               width={500}
               height={300}
               alt="Preview"
-              className="h-full w-full rounded-lg object-cover"
+              className="h-full w-full  rounded-lg object-cover"
             />
           ) : (
             <div className="flex flex-col items-center gap-2 ">
