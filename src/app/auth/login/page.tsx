@@ -45,36 +45,42 @@ export default function LoginPage() {
 
   const onSubmit = async (formData: LoginForm) => {
     try {
-      const response = await login(formData).unwrap();
+      toast.promise(login(formData).unwrap(), {
+        loading: "Logging in...",
+        error: (err) => err.message || "Something went wrong! Try again.",
+        success: (data) => {
+          const { user, accessToken, refreshToken } = data.data;
+
+          // Save tokens in cookies if needed
+          Cookies.set("accessToken", accessToken, {
+            expires: 1,
+            path: "/",
+            sameSite: "lax",
+            secure: false,
+          });
+          Cookies.set("refreshToken", refreshToken, {
+            expires: 7,
+            path: "/",
+            sameSite: "lax",
+            secure: false,
+          });
+
+          // Update Redux slice
+          dispatch(
+            setUser({
+              user,
+            }),
+          );
+          dispatch(setAccessToken(accessToken));
+          dispatch(setRefreshToken(refreshToken));
+
+          // Redirect to dashboard
+          router.push("/dashboard");
+          return data?.message;
+        },
+      });
 
       // ✅ RTK Query unwrap returns the response data directly
-      const { user, accessToken, refreshToken } = response.data;
-
-      // Save tokens in cookies if needed
-      Cookies.set("accessToken", accessToken, {
-        expires: 1,
-        path: "/",
-        sameSite: "lax",
-        secure: false,
-      });
-      Cookies.set("refreshToken", refreshToken, {
-        expires: 7,
-        path: "/",
-        sameSite: "lax",
-        secure: false,
-      });
-
-      // Update Redux slice
-      dispatch(
-        setUser({
-          user,
-        }),
-      );
-      dispatch(setAccessToken(accessToken));
-      dispatch(setRefreshToken(refreshToken));
-
-      // Redirect to dashboard
-      router.push("/dashboard");
     } catch (error) {
       console.error("Login failed:", error);
     }
