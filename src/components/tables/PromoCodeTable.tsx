@@ -30,6 +30,7 @@ interface Promo {
   email: string;
   discountType: string;
   discountValue: string | number;
+  expiredAt: string | Date;
 }
 
 interface PromoTableProps {
@@ -42,6 +43,7 @@ const tableHeaders = [
   "Status",
   "Discount Type",
   "Discount Value",
+  "Expired At",
   "Actions",
 ];
 
@@ -158,6 +160,9 @@ export function PromoCodeTable({ promos }: PromoTableProps) {
                 </TableCell>
                 <TableCell className="px-4 py-3 text-gray-700 text-center">
                   {promo.discountValue}
+                </TableCell>
+                <TableCell className="px-4 py-3 text-gray-700 text-center">
+                  {new Date(promo.expiredAt).toLocaleDateString()}
                 </TableCell>
 
                 <TableCell className="px-4 py-3 text-center">

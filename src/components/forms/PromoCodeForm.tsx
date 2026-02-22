@@ -12,24 +12,28 @@ import {
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Card } from "@/components/ui/card";
+import { useCreateCouponsMutation } from "@/redux/service/coupon/couponApi";
+import { toast } from "sonner";
 
 interface PromoCodeFormData {
   promoCode: string;
   source: string;
   discountType: string;
   discountValue: string;
-  expiryDate: string;
-  usageLimit: string;
-  activeDays: {
-    friday: boolean;
-    saturday: boolean;
-    sunday: boolean;
-  };
-  timeRangeStart: string;
-  timeRangeEnd: string;
+  expiredAt: string;
+}
+
+export enum COUPON_TYPE {
+  UBER = "UBER",
+  LYFT = "LYFT",
+}
+export enum DISCOUNT_TYPE {
+  PERCENTAGE = "PERCENTAGE",
+  FIXED = "FIXED",
 }
 
 export default function PromoCodeForm() {
+  const [createPromoCode] = useCreateCouponsMutation();
   const { register, handleSubmit, watch, reset, setValue } =
     useForm<PromoCodeFormData>({
       defaultValues: {
@@ -37,22 +41,17 @@ export default function PromoCodeForm() {
         source: "",
         discountType: "",
         discountValue: "",
-        expiryDate: "",
-        usageLimit: "",
-        activeDays: {
-          friday: false,
-          saturday: false,
-          sunday: false,
-        },
-        timeRangeStart: "22:00",
-        timeRangeEnd: "03:00",
+        expiredAt: "",
       },
     });
 
-  const activeDays = watch("activeDays");
-
   const onSubmit = (data: PromoCodeFormData) => {
     console.log("Form submitted:", data);
+    toast.promise(createPromoCode({ payload: data }).unwrap(), {
+      loading: "Promo code creating...",
+      success: "Promo code created successfully",
+      error: (err) => err.message || err.data.message,
+    });
     // Handle form submission here
   };
 
@@ -96,8 +95,8 @@ export default function PromoCodeForm() {
                 <SelectValue placeholder="Select Source" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="uber">Uber</SelectItem>
-                <SelectItem value="lyft">Lyft</SelectItem>
+                <SelectItem value={COUPON_TYPE.UBER}>Uber</SelectItem>
+                <SelectItem value={COUPON_TYPE.LYFT}>Lyft</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -117,8 +116,10 @@ export default function PromoCodeForm() {
                 <SelectValue placeholder="Select Type" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="percentage">Percentage</SelectItem>
-                <SelectItem value="fixed">Fixed</SelectItem>
+                <SelectItem value={DISCOUNT_TYPE.PERCENTAGE}>
+                  Percentage
+                </SelectItem>
+                <SelectItem value={DISCOUNT_TYPE.FIXED}>Fixed</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -142,13 +143,13 @@ export default function PromoCodeForm() {
               Expiry Date
             </label>
             <Input
-              {...register("expiryDate")}
+              {...register("expiredAt")}
               type="date"
               placeholder="mm/dd/yyyy"
               className="w-full"
             />
           </div>
-          <div>
+          {/* <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Usage Limit (Optional)
             </label>
@@ -158,17 +159,17 @@ export default function PromoCodeForm() {
               type="number"
               className="w-full"
             />
-          </div>
+          </div> */}
         </div>
 
         {/* Active Time Window Section */}
-        <div className="border-t pt-6">
+        {/* <div className="border-t pt-6">
           <h3 className="text-sm font-medium text-gray-900 mb-4">
             Active Time Window
           </h3>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Days */}
+         
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-3">
                 Days
@@ -222,7 +223,7 @@ export default function PromoCodeForm() {
               </div>
             </div>
 
-            {/* Time Range */}
+          
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-3">
                 Time Range
@@ -242,7 +243,7 @@ export default function PromoCodeForm() {
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
 
         {/* Buttons */}
         <div className="flex gap-3 pt-4">

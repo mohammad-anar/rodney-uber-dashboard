@@ -24,15 +24,17 @@ const PromoCodePage = () => {
     <div className="p-8">
       <div className="mb-10 space-y-5">
         <PromoCodeTable promos={data?.data} />
-        <MyPagination
-          currentPage={currentPage}
-          onPageChange={setCurrentPage}
-          totalPages={data?.meta?.totalPage}
-        />
+        {data?.data?.length > 1 && (
+          <MyPagination
+            currentPage={currentPage}
+            onPageChange={setCurrentPage}
+            totalPages={data?.meta?.totalPage}
+          />
+        )}
       </div>
       <div className=" space-y-8">
         <PromoCodeForm />
-        <BulkUpload />
+        {/* <BulkUpload /> */}
       </div>
     </div>
   );

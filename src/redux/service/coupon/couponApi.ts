@@ -3,6 +3,14 @@ import { baseApi } from "@/redux/api/baseApi";
 
 const couponApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
+    createCoupons: builder.mutation({
+      query: ({ payload }) => ({
+        url: "/coupon",
+        method: "POST",
+        body: payload,
+      }),
+      invalidatesTags: ["Coupon"],
+    }),
     getCoupons: builder.query({
       query: () => ({
         url: "/coupon",
@@ -28,4 +36,9 @@ const couponApi = baseApi.injectEndpoints({
   }),
 });
 
-export const { useGetCouponsQuery, useUpdateCouponMutation, useDeleteCouponMutation } = couponApi;
+export const {
+  useCreateCouponsMutation,
+  useGetCouponsQuery,
+  useUpdateCouponMutation,
+  useDeleteCouponMutation,
+} = couponApi;

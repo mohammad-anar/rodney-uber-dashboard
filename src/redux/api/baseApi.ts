@@ -11,7 +11,10 @@ import { RootState } from "../store";
 
 const baseQuery = fetchBaseQuery({
   baseUrl: process.env.NEXT_PUBLIC_API_BASE || "http://localhost:5000/api/v1",
-  prepareHeaders: (headers, { getState }) => {
+  prepareHeaders: (headers, { getState, endpoint }) => {
+    if (endpoint === "refreshToken") {
+      return headers;
+    }
     const token = (getState() as RootState).auth?.accessToken;
     if (token) {
       headers.set("Authorization", `Bearer ${token}`);
