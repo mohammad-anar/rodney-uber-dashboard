@@ -1,6 +1,12 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Table,
   TableBody,
@@ -9,19 +15,15 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { IconBan, IconEye, IconTrash } from "@tabler/icons-react";
-import { Search } from "lucide-react";
+import { Trash } from "lucide-react";
 import { useState } from "react";
+import { ReusableDialogue } from "../dialogue/ResuableDialogue";
 import { MyModal } from "../shared/MyModal";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { useDeleteCouponMutation } from "@/redux/service/coupon/couponApi";
+import { toast } from "sonner";
 
 interface Promo {
+  _id: string;
   promoCode: string;
   source: string;
   isActive: boolean;
@@ -45,7 +47,13 @@ const tableHeaders = [
 
 export function PromoCodeTable({ promos }: PromoTableProps) {
   const [open, setOpen] = useState(false);
+  const [deleteCoupon] = useDeleteCouponMutation();
   const handleDelete = (id: string) => {
+    toast.promise(deleteCoupon({ id }).unwrap(), {
+      loading: "Deleting...",
+      success: "Deleted successfully!",
+      error: (err) => err.message || err.data?.message,
+    });
     console.log({ id });
   };
 
@@ -154,12 +162,13 @@ export function PromoCodeTable({ promos }: PromoTableProps) {
 
                 <TableCell className="px-4 py-3 text-center">
                   <div className="flex items-center justify-center gap-5">
-                    <div
-                      className="bg-transparent cursor-pointer hover:bg-gray-300 p-2 duration-300 rounded-full"
-                      onClick={() => handleDelete(promo.promoCode)}
-                    >
-                      <IconTrash color="red" size={16} />
-                    </div>
+                    <ReusableDialogue
+                      buttonText="Delete"
+                      title="This action cannot be undone. This will permanently delete"
+                      Icon={Trash}
+                      userId={promo?._id}
+                      onDelete={handleDelete}
+                    />
                   </div>
                 </TableCell>
               </TableRow>
