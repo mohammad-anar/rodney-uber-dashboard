@@ -46,28 +46,28 @@ const UserPage = () => {
   const metrics = [
     {
       label: "Total Users",
-      value: stats.total.toLocaleString(), // 2,847
+      value: stats.total, // 2,847
       icon: Users,
       bgColor: "bg-blue-100",
       iconColor: "text-blue-600",
     },
     {
       label: "Active Users",
-      value: stats.active.toLocaleString(),
+      value: stats.active,
       icon: UserCheck,
       bgColor: "bg-green-100",
       iconColor: "text-green-600",
     },
     {
       label: "Blocked Users",
-      value: stats.blocked.toLocaleString(),
+      value: stats.blocked,
       icon: UserMinus,
       bgColor: "bg-orange-100",
       iconColor: "text-orange-600",
     },
     {
       label: "Deleted Users",
-      value: stats.deleted.toLocaleString(),
+      value: stats.deleted,
       icon: UserX,
       bgColor: "bg-red-100",
       iconColor: "text-red-600",
