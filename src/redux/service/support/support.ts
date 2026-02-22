@@ -4,9 +4,10 @@ import { baseApi } from "@/redux/api/baseApi";
 const couponApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getSupportRequests: builder.query({
-      query: () => ({
+      query: (params) => ({
         url: "/help-request",
         method: "GET",
+        params,
       }),
       providesTags: ["Support"],
     }),

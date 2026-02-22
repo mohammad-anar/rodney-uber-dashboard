@@ -8,7 +8,7 @@ const SupportPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const { data, isLoading } = useGetSupportRequestsQuery(
-    {},
+    { page: currentPage, limit: itemsPerPage },
     {
       selectFromResult: ({ data, isLoading }) => ({
         data: data?.data ?? [],
