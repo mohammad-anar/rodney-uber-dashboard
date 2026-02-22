@@ -26,13 +26,22 @@ import { SupportDetails } from "@/app/dashboard/support/SupportDetails";
 
 /* ================= TYPES ================= */
 
-interface Support {
-  id: string;
-  name: string;
+export enum HelpRequestStatus {
+  APPROVED = "Approved",
+  REJECTED = "Rejected",
+  UNDER_REVIEW = "UnderReview",
+}
+
+export interface Support {
+  _id: string;
+  fullName: string;
   email: string;
-  profilePhoto: string;
-  submittedAt: string;
-  status: "UnderReview" | "Approved" | "Rejected";
+  description: string;
+  helpAmount: number;
+  status: HelpRequestStatus;
+  supportingDocument: string[];
+  createdAt: string;
+  updatedAt: string;
 }
 
 interface SupportRequestProps {
@@ -44,69 +53,15 @@ interface StatusSelectProps {
   onChange: (value: "Approved" | "Rejected" | "UnderReview") => void;
 }
 
-/* ================= CONSTANTS ================= */
-
 const tableHeaders = ["Name", "Email", "Status", "Submitted At", "Actions"];
 
-const defaultSubmitRequests: Support[] = [
-  {
-    id: "1",
-    name: "John Doe",
-    email: "john.doe@example.com",
-    profilePhoto: "https://i.pravatar.cc/150?img=1",
-    submittedAt: "10 Jan 2026",
-    status: "UnderReview",
-  },
-  {
-    id: "2",
-    name: "Sarah Ahmed",
-    email: "sarah.ahmed@example.com",
-    profilePhoto: "https://i.pravatar.cc/150?img=2",
-    submittedAt: "10 Jan 2026",
-    status: "Approved",
-  },
-  {
-    id: "3",
-    name: "Michael Smith",
-    email: "michael.smith@example.com",
-    profilePhoto: "https://i.pravatar.cc/150?img=3",
-    submittedAt: "10 Jan 2026",
-    status: "Rejected",
-  },
-  {
-    id: "4",
-    name: "Ayesha Khan",
-    email: "ayesha.khan@example.com",
-    profilePhoto: "https://i.pravatar.cc/150?img=4",
-    submittedAt: "10 Jan 2026",
-    status: "Approved",
-  },
-  {
-    id: "5",
-    name: "David Johnson",
-    email: "david.johnson@example.com",
-    profilePhoto: "https://i.pravatar.cc/150?img=5",
-    submittedAt: "10 Jan 2026",
-    status: "UnderReview",
-  },
-];
-
-/* ================= MAIN TABLE ================= */
-
-export function SupportRequestTable({
-  submitRequests = defaultSubmitRequests,
-}: SupportRequestProps) {
+export function SupportRequestTable({ submitRequests }: SupportRequestProps) {
   const [open, setOpen] = useState(false);
-  const [requests, setRequests] = useState<Support[]>(submitRequests);
 
   const handleStatusChange = (
     id: string,
     status: "Approved" | "Rejected" | "UnderReview",
-  ) => {
-    setRequests((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, status } : item)),
-    );
-  };
+  ) => {};
 
   return (
     <div className="space-y-6 rounded-xl">
@@ -139,21 +94,23 @@ export function SupportRequestTable({
           </TableHeader>
 
           <TableBody>
-            {requests.map((request) => (
-              <TableRow key={request.id} className="hover:bg-gray-50">
-                <TableCell className="text-center">{request.name}</TableCell>
+            {submitRequests?.map((request) => (
+              <TableRow key={request._id} className="hover:bg-gray-50">
+                <TableCell className="text-center">
+                  {request.fullName}
+                </TableCell>
 
                 <TableCell className="text-center">{request.email}</TableCell>
 
                 <TableCell className="text-center">
                   <StatusSelect
                     value={request.status}
-                    onChange={(value) => handleStatusChange(request.id, value)}
+                    onChange={(value) => handleStatusChange(request._id, value)}
                   />
                 </TableCell>
 
                 <TableCell className="text-center">
-                  {request.submittedAt}
+                  {new Date(request.createdAt).toLocaleString()}
                 </TableCell>
 
                 <TableCell className="text-center">
@@ -178,8 +135,6 @@ export function SupportRequestTable({
     </div>
   );
 }
-
-/* ================= STATUS SELECT ================= */
 
 export function StatusSelect({ value, onChange }: StatusSelectProps) {
   const getStatusStyles = (status: string) => {
