@@ -21,6 +21,7 @@ import { ReusableDialogue } from "../dialogue/ResuableDialogue";
 import { MyModal } from "../shared/MyModal";
 import { useDeleteCouponMutation } from "@/redux/service/coupon/couponApi";
 import { toast } from "sonner";
+import { COUPON_TYPE } from "@/type/type";
 
 interface Promo {
   _id: string;
@@ -34,7 +35,9 @@ interface Promo {
 }
 
 interface PromoTableProps {
-  promos?: Promo[];
+  promos: Promo[];
+  setIsActive: (val: boolean | null) => void;
+  setStatus: (val: COUPON_TYPE | null) => void;
 }
 
 const tableHeaders = [
@@ -47,7 +50,11 @@ const tableHeaders = [
   "Actions",
 ];
 
-export function PromoCodeTable({ promos }: PromoTableProps) {
+export function PromoCodeTable({
+  promos,
+  setStatus,
+  setIsActive,
+}: PromoTableProps) {
   const [open, setOpen] = useState(false);
   const [deleteCoupon] = useDeleteCouponMutation();
   const handleDelete = (id: string) => {
@@ -68,8 +75,13 @@ export function PromoCodeTable({ promos }: PromoTableProps) {
           <Select
             defaultValue={"All Status"}
             onValueChange={(value) => {
-              // handle status change here
-              console.log("New status:", value);
+              if (value === "Active") {
+                setIsActive(true);
+              } else if (value === "Inactive") {
+                setIsActive(false);
+              } else {
+                setIsActive(null);
+              }
             }}
           >
             <SelectTrigger>
@@ -85,8 +97,11 @@ export function PromoCodeTable({ promos }: PromoTableProps) {
           <Select
             defaultValue={"All Source"}
             onValueChange={(value) => {
-              // handle status change here
-              console.log("New status:", value);
+              if (value !== "All Source") {
+                setStatus(value as COUPON_TYPE);
+              } else {
+                setStatus(null);
+              }
             }}
           >
             <SelectTrigger>
@@ -95,8 +110,8 @@ export function PromoCodeTable({ promos }: PromoTableProps) {
 
             <SelectContent>
               <SelectItem value={"All Source"}>All Source</SelectItem>
-              <SelectItem value="Uber">Uber</SelectItem>
-              <SelectItem value="Lyft">Lyft</SelectItem>
+              <SelectItem value={COUPON_TYPE.UBER}>Uber</SelectItem>
+              <SelectItem value={COUPON_TYPE.LYFT}>Lyft</SelectItem>
             </SelectContent>
           </Select>
         </div>
