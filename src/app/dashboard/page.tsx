@@ -16,7 +16,6 @@ const MainPage = () => {
     },
   );
 
-  console.log({ data });
   return (
     <>
       <div className="flex flex-1 flex-col">
