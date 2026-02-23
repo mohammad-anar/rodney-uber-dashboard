@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   IconClock,
   IconTarget,
@@ -17,11 +18,11 @@ import {
 import { ArrowDownWideNarrow, Axis3d, Bandage, PlayIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export function SectionCards() {
+export function SectionCards({ data }: any) {
   const statisticsData = [
     {
       id: 1,
-      amount: 12847,
+      amount: data?.users?.total || 0,
       icon: IconUsersGroup,
       percentage: "+23%",
       description: "Total Users",
@@ -30,7 +31,7 @@ export function SectionCards() {
     },
     {
       id: 2,
-      amount: 45293,
+      amount: data?.couponUsage?.total || 0,
       icon: PlayIcon,
       percentage: "+12%",
       description: "Video watched",
@@ -39,16 +40,16 @@ export function SectionCards() {
     },
     {
       id: 3,
-      amount: 142,
+      amount: data?.coupons?.total,
       icon: Bandage,
-      percentage: "10% active",
+      percentage: `${data?.coupons?.activePercentage || 0}% active`,
       description: "Promo codes",
       bgColor: "blue-100",
       iconColor: "blue",
     },
     {
       id: 4,
-      amount: 15,
+      amount: data?.coupons?.active || 0,
       icon: Axis3d,
       percentage: "active",
       description: "Active promo code",
@@ -57,7 +58,7 @@ export function SectionCards() {
     },
     {
       id: 5,
-      amount: 15,
+      amount: data?.coupons?.expired || 0,
       icon: ArrowDownWideNarrow,
       percentage: "expired",
       description: "Expired promo code",

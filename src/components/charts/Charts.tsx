@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import {
@@ -21,28 +22,41 @@ import {
 } from "@/components/ui/card";
 import { ChartContainer } from "@/components/ui/chart";
 
-const videoCompletionData = [
-  { month: "Jan", value: 68 },
-  { month: "Feb", value: 72 },
-  { month: "Mar", value: 78 },
-  { month: "Apr", value: 82 },
-  { month: "May", value: 85 },
-  { month: "Jun", value: 88 },
-  { month: "Jul", value: 86 },
-  { month: "Aug", value: 89 },
-  { month: "Sep", value: 91 },
-  { month: "Oct", value: 93 },
-  { month: "Nov", value: 95 },
-  { month: "Dec", value: 96 },
+const monthNames = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
 ];
 
-const promoCodeData = [
-  { name: "Active", value: 49.2, color: "#10b981" },
-  { name: "Used", value: 32.6, color: "#6b7280" },
-  { name: "Expired", value: 18.2, color: "#d1d5db" },
-];
+export default function Charts({ data }: any) {
+  const videoCompletionData = data?.couponUsage?.videoUsagePerMonth?.map(
+    (item: any) => ({
+      month: monthNames[item.month - 1],
+      value: item.totalUsage,
+    }),
+  );
 
-export default function Charts() {
+  const promoCodeData = [
+    {
+      name: "Active",
+      value: data?.coupons?.activePercentage,
+      color: "#10b981",
+    },
+    {
+      name: "Expired",
+      value: data?.coupons?.expiredPercentage,
+      color: "#d1d5db",
+    },
+  ];
   return (
     <main>
       <div className="grid grid-cols-1 gap-8  mx-auto lg:grid-cols-2">
@@ -95,7 +109,7 @@ export default function Charts() {
                     stroke="#94a3b8"
                     domain={[0, 100]}
                     style={{ fontSize: "13px" }}
-                    tickFormatter={(value) => `${value}%`}
+                    tickFormatter={(value) => `${value}`}
                   />
                   <Tooltip
                     contentStyle={{
@@ -104,7 +118,7 @@ export default function Charts() {
                       borderRadius: "6px",
                       color: "#f1f5f9",
                     }}
-                    formatter={(value) => [`${value}%`, "Completion Rate"]}
+                    formatter={(value) => [`${value}`, "Completion Rate"]}
                     labelStyle={{ color: "#f1f5f9" }}
                   />
                   <Area
