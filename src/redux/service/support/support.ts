@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { baseApi } from "@/redux/api/baseApi";
 
-const couponApi = baseApi.injectEndpoints({
+const supportApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getSupportRequests: builder.query({
       query: (params) => ({
@@ -33,4 +33,4 @@ export const {
   useGetSupportRequestsQuery,
   useUpdateSupportRequestMutation,
   useDeleteSupportRequestMutation,
-} = couponApi;
+} = supportApi;
