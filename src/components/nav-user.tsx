@@ -18,12 +18,11 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { useRouter } from "next/navigation";
-import Cookies from "js-cookie";
-import { useDispatch } from "react-redux";
 import { setAccessToken, setUser } from "@/redux/features/auth";
 import { useAppSelector } from "@/redux/hooks/hooks";
 import { RootState } from "@/redux/store";
+import Cookies from "js-cookie";
+import { useDispatch } from "react-redux";
 
 export function NavUser() {
   const user = useAppSelector((state: RootState) => state.auth.user);
