@@ -1,6 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { baseApi } from "@/redux/api/baseApi";
-import { IUser } from "@/type/type";
 
 const userApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
