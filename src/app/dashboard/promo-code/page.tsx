@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import BulkUpload from "@/components/forms/BulkUpload";
 import PromoCodeForm from "@/components/forms/PromoCodeForm";
 import { MyPagination } from "@/components/shared/MyPagination";
 import { PromoCodeTable } from "@/components/tables/PromoCodeTable";
