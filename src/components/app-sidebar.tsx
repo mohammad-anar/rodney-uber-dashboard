@@ -56,11 +56,11 @@ const data = {
       url: "/dashboard/settings",
       icon: IconSettings,
     },
-    {
-      name: "Notifications",
-      url: "/dashboard/notification",
-      icon: IconBell,
-    },
+    // {
+    //   name: "Notifications",
+    //   url: "/dashboard/notification",
+    //   icon: IconBell,
+    // },
   ],
 };
 
