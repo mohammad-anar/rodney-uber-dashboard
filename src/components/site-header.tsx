@@ -1,15 +1,5 @@
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { NavUser } from "./nav-user";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
-import { IconBell } from "@tabler/icons-react";
-import { User } from "lucide-react";
-import Link from "next/link";
-import { Button } from "./ui/button";
 
 export function SiteHeader() {
   return (
@@ -22,7 +12,7 @@ export function SiteHeader() {
         /> */}
         <h1 className="text-base font-medium">Documents</h1>
         <div className="ml-auto flex items-center gap-2">
-          <DropdownMenu>
+          {/* <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <div
                 className={
@@ -70,7 +60,7 @@ export function SiteHeader() {
                 </Link>
               </div>
             </DropdownMenuContent>
-          </DropdownMenu>
+          </DropdownMenu> */}
           <NavUser />
         </div>
       </div>
