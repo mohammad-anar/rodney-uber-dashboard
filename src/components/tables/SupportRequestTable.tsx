@@ -2,7 +2,7 @@
 "use client";
 
 import { useState } from "react";
-import { Search } from "lucide-react";
+import { Loader, Search } from "lucide-react";
 
 import {
   Table,
@@ -49,6 +49,7 @@ export interface Support {
 
 interface SupportRequestProps {
   submitRequests?: Support[];
+  isLoading: boolean;
 }
 
 interface StatusSelectProps {
@@ -58,7 +59,7 @@ interface StatusSelectProps {
 
 const tableHeaders = ["Name", "Email", "Status", "Submitted At", "Actions"];
 
-export function SupportRequestTable({ submitRequests }: SupportRequestProps) {
+export function SupportRequestTable({ submitRequests, isLoading }: SupportRequestProps) {
   const [open, setOpen] = useState(false);
   const [details, setDetails] = useState<any>();
 
@@ -106,7 +107,15 @@ export function SupportRequestTable({ submitRequests }: SupportRequestProps) {
             </TableRow>
           </TableHeader>
 
-          <TableBody>
+          {isLoading ? (
+                      <TableBody>
+                        <TableRow>
+                          <TableCell colSpan={5} className="text-center py-6">
+                            <Loader className="animate-spin mx-auto" />
+                          </TableCell>
+                        </TableRow>
+                      </TableBody>
+                    ) :<TableBody>
             {submitRequests?.map((request) => (
               <TableRow key={request._id} className="hover:bg-gray-50">
                 <TableCell className="text-center">
@@ -142,7 +151,7 @@ export function SupportRequestTable({ submitRequests }: SupportRequestProps) {
                 </TableCell>
               </TableRow>
             ))}
-          </TableBody>
+          </TableBody>}
         </Table>
       </div>
 

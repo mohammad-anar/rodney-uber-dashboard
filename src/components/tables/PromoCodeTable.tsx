@@ -15,7 +15,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Trash } from "lucide-react";
+import { Loader, Trash } from "lucide-react";
 import { useState } from "react";
 import { ReusableDialogue } from "../dialogue/ResuableDialogue";
 import { MyModal } from "../shared/MyModal";
@@ -38,6 +38,7 @@ interface PromoTableProps {
   promos: Promo[];
   setIsActive: (val: boolean | null) => void;
   setStatus: (val: COUPON_TYPE | null) => void;
+  isLoading: boolean;
 }
 
 const tableHeaders = [
@@ -54,6 +55,7 @@ export function PromoCodeTable({
   promos,
   setStatus,
   setIsActive,
+  isLoading,
 }: PromoTableProps) {
   const [open, setOpen] = useState(false);
   const [deleteCoupon] = useDeleteCouponMutation();
@@ -132,68 +134,78 @@ export function PromoCodeTable({
             </TableRow>
           </TableHeader>
 
-          <TableBody>
-            {promos?.map((promo) => (
-              <TableRow
-                key={promo.promoCode}
-                className="border-b last:border-b-0 hover:bg-gray-50"
-              >
-                <TableCell className="px-4 py-3">{promo.promoCode}</TableCell>
-                <TableCell className="px-4 py-3 flex items-center justify-center">
-                  {promo.source}
-                </TableCell>
-
-                <TableCell className="px-4 py-3 text-center ">
-                  <Select
-                    defaultValue={
-                      promo.isActive === true ? "Active" : "InActive"
-                    }
-                    onValueChange={(value) => {
-                      // handle status change here
-                      console.log("New status:", value);
-                    }}
-                  >
-                    <SelectTrigger
-                      className={`w-[120px] border mx-auto ${
-                        promo.isActive === true
-                          ? "bg-green-50 text-green-700 border-green-300"
-                          : "bg-orange-50 text-orange-700 border-orange-300"
-                      }`}
-                    >
-                      <SelectValue placeholder="Status" />
-                    </SelectTrigger>
-
-                    <SelectContent>
-                      <SelectItem value={"Active"}>Active</SelectItem>
-                      <SelectItem value="Inactive">Inactive</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </TableCell>
-
-                <TableCell className="px-4 py-3 text-gray-700 text-center">
-                  {promo.discountType}
-                </TableCell>
-                <TableCell className="px-4 py-3 text-gray-700 text-center">
-                  {promo.discountValue}
-                </TableCell>
-                <TableCell className="px-4 py-3 text-gray-700 text-center">
-                  {new Date(promo.expiredAt).toLocaleDateString()}
-                </TableCell>
-
-                <TableCell className="px-4 py-3 text-center">
-                  <div className="flex items-center justify-center gap-5">
-                    <ReusableDialogue
-                      buttonText="Delete"
-                      title="This action cannot be undone. This will permanently delete"
-                      Icon={Trash}
-                      userId={promo?._id}
-                      onDelete={handleDelete}
-                    />
-                  </div>
+          {isLoading ? (
+            <TableBody>
+              <TableRow>
+                <TableCell colSpan={5} className="text-center py-6">
+                  <Loader className="animate-spin mx-auto" />
                 </TableCell>
               </TableRow>
-            ))}
-          </TableBody>
+            </TableBody>
+          ) : (
+            <TableBody>
+              {promos?.map((promo) => (
+                <TableRow
+                  key={promo.promoCode}
+                  className="border-b last:border-b-0 hover:bg-gray-50"
+                >
+                  <TableCell className="px-4 py-3">{promo.promoCode}</TableCell>
+                  <TableCell className="px-4 py-3 flex items-center justify-center">
+                    {promo.source}
+                  </TableCell>
+
+                  <TableCell className="px-4 py-3 text-center ">
+                    <Select
+                      defaultValue={
+                        promo.isActive === true ? "Active" : "InActive"
+                      }
+                      onValueChange={(value) => {
+                        // handle status change here
+                        console.log("New status:", value);
+                      }}
+                    >
+                      <SelectTrigger
+                        className={`w-[120px] border mx-auto ${
+                          promo.isActive === true
+                            ? "bg-green-50 text-green-700 border-green-300"
+                            : "bg-orange-50 text-orange-700 border-orange-300"
+                        }`}
+                      >
+                        <SelectValue placeholder="Status" />
+                      </SelectTrigger>
+
+                      <SelectContent>
+                        <SelectItem value={"Active"}>Active</SelectItem>
+                        <SelectItem value="Inactive">Inactive</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </TableCell>
+
+                  <TableCell className="px-4 py-3 text-gray-700 text-center">
+                    {promo.discountType}
+                  </TableCell>
+                  <TableCell className="px-4 py-3 text-gray-700 text-center">
+                    {promo.discountValue}
+                  </TableCell>
+                  <TableCell className="px-4 py-3 text-gray-700 text-center">
+                    {new Date(promo.expiredAt).toLocaleDateString()}
+                  </TableCell>
+
+                  <TableCell className="px-4 py-3 text-center">
+                    <div className="flex items-center justify-center gap-5">
+                      <ReusableDialogue
+                        buttonText="Delete"
+                        title="This action cannot be undone. This will permanently delete"
+                        Icon={Trash}
+                        userId={promo?._id}
+                        onDelete={handleDelete}
+                      />
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          )}
         </Table>
       </div>
       <MyModal open={open} onOpenChange={(val: boolean) => setOpen(val)}>

@@ -40,7 +40,12 @@ const PromoCodePage = () => {
   return (
     <div className="p-8">
       <div className="mb-10 space-y-5">
-        <PromoCodeTable promos={data?.data} setStatus={setStatus} setIsActive={setIsActive} />
+        <PromoCodeTable
+          promos={data?.data}
+          setStatus={setStatus}
+          isLoading={isLoading}
+          setIsActive={setIsActive}
+        />
         {data?.data?.length > 1 && (
           <MyPagination
             currentPage={currentPage}

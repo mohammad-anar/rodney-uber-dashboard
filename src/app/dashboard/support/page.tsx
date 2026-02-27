@@ -19,7 +19,7 @@ const SupportPage = () => {
   console.log(data);
   return (
     <div className="p-5">
-      <SupportRequestTable submitRequests={data?.data} />
+      <SupportRequestTable submitRequests={data?.data} isLoading={isLoading} />
       <div className="mt-5">
         <MyPagination
           currentPage={currentPage}
