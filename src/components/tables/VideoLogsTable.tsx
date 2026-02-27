@@ -78,7 +78,7 @@ export function VideoLogsTable({
             <TableBody>
               {videoLogs?.map((log: VideoLogs) => (
                 <TableRow
-                  key={log.id.concat(new Date().toLocaleDateString())}
+                  key={log?.id?.concat(new Date().toLocaleDateString())}
                   className="border-b last:border-b-0 hover:bg-gray-50"
                 >
                   <TableCell className="px-4 py-3">{log.email}</TableCell>

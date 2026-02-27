@@ -47,7 +47,14 @@ export default function LoginPage() {
     try {
       toast.promise(login(formData).unwrap(), {
         loading: "Logging in...",
-        error: (err) => err.message || "Something went wrong! Try again.",
+        error: (err) => {
+          console.log({ err });
+          return (
+            err.message ||
+            err.data?.message ||
+            "Something went wrong! Try again."
+          );
+        },
         success: (data) => {
           const { user, accessToken, refreshToken } = data.data;
 
