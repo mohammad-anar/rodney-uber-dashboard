@@ -26,7 +26,6 @@ import { useDispatch } from "react-redux";
 
 export function NavUser() {
   const user = useAppSelector((state: RootState) => state.auth.user);
-  console.log(user);
   const { isMobile } = useSidebar();
   const dispatch = useDispatch();
 
