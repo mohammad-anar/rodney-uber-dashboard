@@ -28,7 +28,7 @@ export function VideoSection() {
     {},
     {
       selectFromResult: ({ data, isLoading }) => ({
-        data: data?.data?.[0] || null,
+        data: data?.data|| null,
         isLoading,
       }),
     },
