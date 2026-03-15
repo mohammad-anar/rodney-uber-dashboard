@@ -3,6 +3,14 @@ import { baseApi } from "@/redux/api/baseApi";
 
 const videoApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
+    createVideo: builder.mutation({
+      query: ({ payload }: { payload: FormData }) => ({
+        url: `/video`,
+        method: "POST",
+        body: payload,
+      }),
+      invalidatesTags: ["Video"],
+    }),
     getVideo: builder.query({
       query: () => ({
         url: "/video",
@@ -30,6 +38,7 @@ const videoApi = baseApi.injectEndpoints({
 });
 
 export const {
+  useCreateVideoMutation,
   useGetVideoQuery,
   useUpdateVideoMutation,
   useGetVideoCompletionLogsQuery,

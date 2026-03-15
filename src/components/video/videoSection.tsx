@@ -13,6 +13,7 @@ import { VideoEditForm } from "./VideoEditForm";
 import { Button } from "@/components/ui/button";
 import { MyModal } from "@/components/shared/MyModal";
 import {
+  useCreateVideoMutation,
   useGetVideoQuery,
   useUpdateVideoMutation,
 } from "@/redux/service/video/video";
@@ -21,12 +22,13 @@ import { toast } from "sonner";
 export function VideoSection() {
   const [isEditing, setIsEditing] = useState(false);
   const [updateVideo, { isLoading: updateLoading }] = useUpdateVideoMutation();
+  const [createVideo, { isLoading: createLoading }] = useCreateVideoMutation();
 
   const { data, isLoading } = useGetVideoQuery(
     {},
     {
       selectFromResult: ({ data, isLoading }) => ({
-        data: data?.data ?? [],
+        data: data?.data?.[0] || null,
         isLoading,
       }),
     },
@@ -50,11 +52,22 @@ export function VideoSection() {
         formData.append("media", updatedData.url);
       }
 
-      toast.promise(updateVideo({ id: data._id, payload: formData }).unwrap(), {
-        loading: "Video Updating...",
-        success: "Video updated successfully",
-        error: (err) => err?.data?.message || err.message,
-      });
+      if (data?._id) {
+        toast.promise(
+          updateVideo({ id: data._id, payload: formData }).unwrap(),
+          {
+            loading: "Video Updating...",
+            success: "Video updated successfully",
+            error: (err) => err?.data?.message || err.message,
+          },
+        );
+      } else {
+        toast.promise(createVideo({ payload: formData }).unwrap(), {
+          loading: "Video Creating...",
+          success: "Video created successfully",
+          error: (err) => err?.data?.message || err.message,
+        });
+      }
       setIsEditing(false);
     } catch (error) {
       console.error(error);
@@ -76,8 +89,8 @@ export function VideoSection() {
             {/* Video Player */}
             <div className="w-full aspect-video max-w-2xl bg-black rounded-lg overflow-hidden">
               <video
-                src={data.url}
-                poster={data.thumbnail}
+                src={data?.url}
+                poster={data?.thumbnail}
                 controls
                 className="w-full h-full object-cover"
               />
@@ -85,13 +98,17 @@ export function VideoSection() {
 
             {/* Video Info */}
             <div className="space-y-2">
-              <h3 className="text-2xl font-bold">{data.title}</h3>
-              <p className="text-muted-foreground">{data.description}</p>
+              <h3 className="text-2xl font-bold">
+                {data?.title || "No Featured Video"}
+              </h3>
+              <p className="text-muted-foreground">
+                {data?.description || "Upload a video to display it here."}
+              </p>
               <Button
                 onClick={() => setIsEditing(true)}
                 className="mt-3 sm:mt-8 px-4 py-2 !bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
               >
-                Edit Video
+                {data?._id ? "Edit Video" : "Add Video"}
               </Button>
             </div>
           </CardContent>
@@ -102,7 +119,14 @@ export function VideoSection() {
         onOpenChange={(val: boolean) => setIsEditing(false)}
       >
         <VideoEditForm
-          initialData={data}
+          initialData={
+            data || {
+              url: "",
+              thumbnail: "",
+              title: "",
+              description: "",
+            }
+          }
           onSave={handleSaveVideo}
           onCancel={() => setIsEditing(false)}
         />
