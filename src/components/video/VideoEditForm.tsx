@@ -22,6 +22,7 @@ const videoFormSchema = z.object({
   thumbnail: z.instanceof(File).optional(),
   title: z.string().min(3, "Title must be at least 3 characters"),
   description: z.string().min(10, "Description must be at least 10 characters"),
+  duration: z.number().min(1, "Duration must be at least 1 second"),
 });
 
 type VideoFormValues = z.infer<typeof videoFormSchema>;
@@ -32,6 +33,7 @@ interface VideoEditFormProps {
     thumbnail: string;
     title: string;
     description: string;
+    duration: number;
   };
   onSave: (data: Partial<VideoFormValues>) => void;
   onCancel: () => void;
@@ -61,6 +63,7 @@ export function VideoEditForm({
       thumbnail: undefined,
       title: initialData.title,
       description: initialData.description,
+      duration: initialData.duration,
     },
   });
 
@@ -267,6 +270,25 @@ export function VideoEditForm({
                   {...field}
                   className="min-h-24 resize-none"
                   placeholder="Enter video description"
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        {/* ================= DURATION ================= */}
+        <FormField
+          control={form.control}
+          name="duration"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Duration (seconds)</FormLabel>
+              <FormControl>
+                <Input
+                  {...field}
+                  type="number"
+                  placeholder="Enter video duration in seconds"
                 />
               </FormControl>
               <FormMessage />

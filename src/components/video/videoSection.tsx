@@ -39,6 +39,7 @@ export function VideoSection() {
       const payload = {
         title: updatedData.title,
         description: updatedData.description,
+        duration: updatedData.duration,
       };
 
       const formData = new FormData();
@@ -125,6 +126,7 @@ export function VideoSection() {
               thumbnail: "",
               title: "",
               description: "",
+              duration: 0,
             }
           }
           onSave={handleSaveVideo}
