@@ -18,11 +18,11 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 
 const videoFormSchema = z.object({
-  url: z.instanceof(File).optional(),
-  thumbnail: z.instanceof(File).optional(),
+  url: z.any().optional(),
+  thumbnail: z.any().optional(),
   title: z.string().min(3, "Title must be at least 3 characters"),
   description: z.string().min(10, "Description must be at least 10 characters"),
-  duration: z.number().min(1, "Duration must be at least 1 second"),
+  duration: z.coerce.number().min(1, "Duration must be at least 1 second"),
 });
 
 type VideoFormValues = z.infer<typeof videoFormSchema>;
@@ -57,13 +57,13 @@ export function VideoEditForm({
   const thumbnailInputRef = useRef<HTMLInputElement>(null);
 
   const form = useForm<VideoFormValues>({
-    resolver: zodResolver(videoFormSchema),
+    resolver: zodResolver(videoFormSchema) as any,
     defaultValues: {
       url: undefined,
       thumbnail: undefined,
-      title: initialData.title,
-      description: initialData.description,
-      duration: initialData.duration,
+      title: initialData.title || "",
+      description: initialData.description || "",
+      duration: initialData.duration || 0,
     },
   });
 
