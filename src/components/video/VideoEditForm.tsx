@@ -1,23 +1,21 @@
 "use client";
 
-import React, { useState, useRef } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
-  FormDescription,
-  FormMessage,
+  FormMessage
 } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Upload, X } from "lucide-react";
-import Image from "next/image";
+import React, { useRef, useState } from "react";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
 
 const videoFormSchema = z.object({
   url: z.instanceof(File).optional(),

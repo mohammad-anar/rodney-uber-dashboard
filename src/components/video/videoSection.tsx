@@ -33,21 +33,32 @@ export function VideoSection() {
   );
 
   const handleSaveVideo = async (updatedData: any) => {
-    const payload = {
-      title: updatedData.title,
-      description: updatedData.description,
-    };
-    const formData = new FormData();
+    try {
+      const payload = {
+        title: updatedData.title,
+        description: updatedData.description,
+      };
 
-    formData.append("data", JSON.stringify(payload));
-    if (updatedData.thumbnail) {
-      formData.append("image", updatedData.thumbnail);
+      const formData = new FormData();
+      formData.append("data", JSON.stringify(payload));
+
+      if (updatedData.thumbnail) {
+        formData.append("image", updatedData.thumbnail);
+      }
+
+      if (updatedData.url) {
+        formData.append("media", updatedData.url);
+      }
+
+      toast.promise(updateVideo({ id: data._id, payload: formData }).unwrap(), {
+        loading: "Video Updating...",
+        success: "Video updated successfully",
+        error: (err) => err?.data?.message || err.message,
+      });
+      setIsEditing(false);
+    } catch (error) {
+      console.error(error);
     }
-    if (updatedData.url) {
-      formData.append("media", updatedData.url);
-    }
-    toast.promise(updateVideo({ id: data._id, payload: formData }));
-    setIsEditing(false);
   };
 
   return (
@@ -88,7 +99,7 @@ export function VideoSection() {
       </div>
       <MyModal
         open={isEditing}
-        onOpenChange={(val: boolean) => setIsEditing(val)}
+        onOpenChange={(val: boolean) => setIsEditing(false)}
       >
         <VideoEditForm
           initialData={data}
