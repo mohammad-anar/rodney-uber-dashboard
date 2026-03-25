@@ -18,6 +18,13 @@ const videoApi = baseApi.injectEndpoints({
       }),
       providesTags: ["Video"],
     }),
+    getVideoStream: builder.query({
+      query: (id) => ({
+        url: `/video/${id}/stream`,
+        method: "GET",
+      }),
+      providesTags: ["Video"],
+    }),
     getVideoCompletionLogs: builder.query({
       query: (params) => ({
         url: "/coupon-usage",
@@ -40,6 +47,7 @@ const videoApi = baseApi.injectEndpoints({
 export const {
   useCreateVideoMutation,
   useGetVideoQuery,
+  useGetVideoStreamQuery,
   useUpdateVideoMutation,
   useGetVideoCompletionLogsQuery,
 } = videoApi;

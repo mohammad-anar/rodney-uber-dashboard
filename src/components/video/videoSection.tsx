@@ -15,6 +15,7 @@ import { MyModal } from "@/components/shared/MyModal";
 import {
   useCreateVideoMutation,
   useGetVideoQuery,
+  useGetVideoStreamQuery,
   useUpdateVideoMutation,
 } from "@/redux/service/video/video";
 import { toast } from "sonner";
@@ -28,11 +29,16 @@ export function VideoSection() {
     {},
     {
       selectFromResult: ({ data, isLoading }) => ({
-        data: data?.data|| null,
+        data: data?.data || null,
         isLoading,
       }),
     },
   );
+
+  const { data: streamData } = useGetVideoStreamQuery(data?._id, {
+    skip: !data?._id,
+  });
+  console.log({ streamData });
 
   const handleSaveVideo = async (updatedData: any) => {
     try {
@@ -89,12 +95,14 @@ export function VideoSection() {
           <CardContent className=" grid grid-cols-1 xl:grid-cols-2 gap-8 ">
             {/* Video Player */}
             <div className="w-full aspect-video max-w-2xl bg-black rounded-lg overflow-hidden">
-              <video
-                src={data?.url}
-                poster={data?.thumbnail}
-                controls
-                className="w-full h-full object-cover"
-              />
+              {data?._id && (
+                <video
+                  src={`https://api.zeroproofdrive.org/api/v1/video/${data?._id}/stream`}
+                  poster={data?.thumbnail}
+                  controls
+                  className="w-full h-full object-cover"
+                />
+              )}
             </div>
 
             {/* Video Info */}
